@@ -3,6 +3,8 @@ import { RiUserLine } from 'react-icons/ri';
 
 const PatientForm = ({ onSubmit }) => {
     const [name, setName] = useState('');
+    const [paternalLastName, setPaternalLastName] = useState('');
+    const [maternalLastName, setMaternalLastName] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
     const [status, setStatus] = useState('');
@@ -48,8 +50,8 @@ const PatientForm = ({ onSubmit }) => {
                         <input
                             id="paternal-last-name"
                             type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={paternalLastName}
+                            onChange={(e) => setPaternalLastName(e.target.value)}
                             className="w-full bg-gray-100 py-2 pl-10 pr-4 rounded-lg outline-none"
                             placeholder="Escribe tu apellido paterno"
                         />
@@ -64,8 +66,8 @@ const PatientForm = ({ onSubmit }) => {
                         <input
                             id="maternal-last-name"
                             type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={maternalLastName}
+                            onChange={(e) => setMaternalLastName(e.target.value)}
                             className="w-full bg-gray-100 py-2 pl-10 pr-4 rounded-lg outline-none"
                             placeholder="Escribe tu apellido materno"
                         />
@@ -74,9 +76,7 @@ const PatientForm = ({ onSubmit }) => {
             </div>
             <div className="w-full flex flex-col gap-y-2">
                 <div>
-                    <label>
-                        Edad <span className="text-red-500">*</span>
-                    </label>
+                    <label>Edad <span className="text-red-500">*</span> </label>
                     <div className="relative">
                         <RiUserLine className="text-gray-500 absolute top-1/2 -translate-y-1/2 left-4" />
                         <input
@@ -142,10 +142,8 @@ const PatientForm = ({ onSubmit }) => {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
-            <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
+            <button type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Agregar Paciente
             </button>
         </form>
