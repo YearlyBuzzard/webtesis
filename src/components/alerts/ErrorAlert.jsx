@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const TemperatureAlert = ({ message, onClose }) => {
+const ErrorAlert = ({ message, onClose }) => {
   const [showAlert, setShowAlert] = useState(true);
 
   useEffect(() => {
@@ -64,4 +64,4 @@ const TemperatureAlert = ({ message, onClose }) => {
   );
 };
 
-export default TemperatureAlert;
+export default ErrorAlert;

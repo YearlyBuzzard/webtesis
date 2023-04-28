@@ -10,6 +10,11 @@ const data = [
   { time: '5', value: 76 },
   { time: '6', value: 79 },
   { time: '7', value: 74 },
+  { time: '7', value: 80 },
+  { time: '7', value: 90 },
+  { time: '7', value: 74 },
+  { time: '7', value: 74 },
+  { time: '7', value: 100 },
 ];
 
 const HeartRate = ({ bpm }) => {

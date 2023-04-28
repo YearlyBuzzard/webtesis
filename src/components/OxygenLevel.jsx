@@ -5,6 +5,8 @@ import { LineChart, Line, YAxis, Tooltip } from 'recharts';
 const data = [
   { time: '1', value: 95 },
   { time: '2', value: 97 },
+  { time: '3', value: 109 },
+  { time: '4', value: 97 },
 ];
 
 const OxygenLevel = ({ level }) => {
@@ -25,7 +27,6 @@ const OxygenLevel = ({ level }) => {
                 dataKey="value"
                 stroke="#8884d8"
                 strokeWidth={2}
-                fill="rgba(136, 132, 216, 0.2)"
                 dot={false}
               />
               <YAxis />

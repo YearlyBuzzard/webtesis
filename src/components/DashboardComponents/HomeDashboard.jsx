@@ -1,7 +1,7 @@
 import React from 'react';
 import DoctorWelcomeCard from './DoctorWelcomeCard';
 import PatientTable from './PatientTable';
-import AlertHistory from './AlertHistory';
+import AlertHistory from './AlertHistoryHome';
 import Note from './Note';
 
 const notes = [
