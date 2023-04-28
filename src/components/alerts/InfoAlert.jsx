@@ -2,8 +2,8 @@ import React from 'react';
 
 const InfoAlert = ({ message }) => {
   return (
-    <div className="max-w-md py-4 px-6 shadow-2xl shadow-sky-800 rounded-lg bg-sky-600">
-      <div className="flex flex-col">
+    <div className="fixed bottom-4 right-4 max-w-md py-4 px-6 shadow-2xl shadow-red-800 rounded-lg bg-red-600">
+    <div className="flex flex-col">
         <div className="flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"

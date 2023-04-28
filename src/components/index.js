@@ -1,3 +1,4 @@
+import 'react-toastify/dist/ReactToastify.css';
 import Nav from "./Navbar";
 import PersonalCard from "./Card";
 import MedicalCard from "./MedicalCard";
@@ -15,12 +16,16 @@ import DoctorWelcomeCard from "./DashboardComponents/DoctorWelcomeCard";
 import Note from "./DashboardComponents/Note"
 import AlertHistory from "./DashboardComponents/AlertHistoryHome";
 import PatientList from "./DashboardComponents/PatientList"
-import HomeDashboard from "./DashboardComponents/HomeDashboard"
+import HomeDashboard from "../pages/HomeDashboard"
 import PatientForm from "./DashboardComponents/PatientForm";
 import ErrorAlert from "././alerts/ErrorAlert"
+import NewUsers from "../pages/NewUsers"
+import HistoryAlerts from '../pages/HistoryAlerts';
+import ListAlertsHistory from './DashboardComponents/ListAlertsHistory'
+import Login from '../pages/Login'
 
 export{
     Nav, PersonalCard, MedicalCard, DistanceDisplay, HeartRate, OxygenLevel ,PatientBloodPressure, PatientTemperature, WeatherComponent, Profile, Slider, 
-    Dashboard, PatientTable,DoctorWelcomeCard, Note, AlertHistory, PatientList, HomeDashboard, PatientForm, ErrorAlert
-
+    Dashboard, PatientTable,DoctorWelcomeCard, Note, AlertHistory, PatientList, HomeDashboard, PatientForm, ErrorAlert, NewUsers, HistoryAlerts,
+    ListAlertsHistory, Login
 }

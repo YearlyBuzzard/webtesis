@@ -5,57 +5,59 @@ import { FaHome, FaUser, FaCalendar, FaPlus, FaBell, FaUserMd } from 'react-icon
 const Slider = ({ setActiveComponent }) => {
   return (
     <div className="h-screen flex items-center">
-<aside className="flex flex-col justify-between gap-8 bg-gray-100 min-h-full max-h-full w-full sm:w-80 p-4 overflow-y-hidden shadow-md z-10 m-4 rounded-lg mx-auto">      <section>
-        <div className="logo flex items-center gap-4 mb-8">
-          <img src="/logo-white.png" className="w-10 h-10 bg-indigo-600 p-2 rounded-xl" />
-          <div>
-            <h3 className="font-bold text-indigo-600">Alejandro Sol</h3>
-            <p className="text-gray-800 text-xs">Desarrollo de aplicaciones</p>
+      <aside className="flex flex-col justify-between gap-8 bg-gray-100 min-h-full max-h-full w-full sm:w-80 p-4 overflow-y-hidden shadow-md z-10 m-4 rounded-lg mx-auto">
+        <section>
+          <div className="logo flex items-center gap-4 mb-8">
+            <img src="/logo-white.png" className="w-10 h-10 bg-indigo-600 p-2 rounded-xl" />
+            <div>
+              <h3 className="font-bold text-indigo-600">Alejandro Sol</h3>
+              <p className="text-gray-800 text-xs">Desarrollo de aplicaciones</p>
+            </div>
           </div>
-        </div>
-        <form> <input type="text" className="w-full p-2 rounded-lg outline-none bg-gray-200" placeholder="Buscador"/> </form>
-        <ul className="mt-4 mb-8">
-          <li>
+          <form>
+            <input type="text" className="w-full p-2 rounded-lg outline-none bg-gray-200" placeholder="Buscador" />
+          </form>
+          <ul className="mt-4 mb-8">
             <li>
-              <Link to="#" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg" onClick={() => setActiveComponent('inicio')}>
-                <FaHome className="w-5 h-5"/>
+              <Link to="/Dashboard" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
+                <FaHome className="w-5 h-5" />
                 <span>Inicio</span>
               </Link>
             </li>
-          </li>
-          <li>
-            <button onClick={() => setActiveComponent('pacientes')} className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
-              <FaUser className="w-5 h-5" />
-              <span>Pacientes</span>
-            </button>
-          </li>
-          <li>
-            <a href="#" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
-              <FaCalendar className="w-5 h-5" />
-              <span>Calendario</span>
-            </a>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            <button onClick={() => setActiveComponent('patients')} className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
-              <FaUser className="w-5 h-5" />
-              <span>Nuevo Paciente</span>
-            </button>
-          </li>
-          <li>
-            <a href="#" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg"> <FaBell className="w-5 h-5" />
-              <span>Historial de Pacientes</span>
-            </a>
-          </li>
-          <li>
-            <a href="#" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
-              <FaUserMd className="w-5 h-5" />
-              <span>Pacientes</span>
-            </a>
-          </li>
-        </ul>
-      </section>
+            <li>
+              <Link to="/Pacientes" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
+                <FaUser className="w-5 h-5" />
+                <span>Pacientes</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/CrearUsuario" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
+                <FaUser className="w-5 h-5" />
+                <span>Agregar Pacientes</span>
+              </Link>
+            </li>
+          </ul>
+          <ul>
+            <li>
+              <button onClick={() => setActiveComponent('patients')} className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
+                <FaUser className="w-5 h-5" />
+                <span>Nuevo Paciente</span>
+              </button>
+            </li>
+            <li>
+            <Link to="/Alertas" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
+                <FaUser className="w-5 h-5" />
+                <span>Historial Alertas</span>
+              </Link>
+            </li>
+            <li>
+              <a href="#" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
+                <FaUserMd className="w-5 h-5" />
+                <span>Pacientes</span>
+              </a>
+            </li>
+          </ul>
+        </section>
       <section>
         <ul className="my-4">
           <li>

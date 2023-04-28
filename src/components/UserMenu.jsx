@@ -36,10 +36,6 @@ const UserMenu = ({ userName = 'Alejandro Sol' }) => {
 
   const userProfileImage = getRandomProfileImage();
 
-  const handleDashboardClick = () => {
-    setIsOpen(false);
-    history.push('/dashboard');
-  };
 
   return (
     <div className="relative" ref={menuRef}>
@@ -50,7 +46,7 @@ const UserMenu = ({ userName = 'Alejandro Sol' }) => {
       {isOpen && (
         <ul className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl text-gray-700">
           <li>
-            <Link to="/perfil" className="block px-4 py-2 hover:bg-gray-200">
+            <Link to="/" className="block px-4 py-2 hover:bg-gray-200">
               Perfil
             </Link>
           </li>
@@ -61,7 +57,7 @@ const UserMenu = ({ userName = 'Alejandro Sol' }) => {
             </a>
           </li>
           <li>
-            <Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-200">Panel de Control</Link>
+            <Link to="/" className="block px-4 py-2 hover:bg-gray-200">Panel de Control</Link>
           </li>
 
           <li>

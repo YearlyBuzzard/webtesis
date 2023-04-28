@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { toast } from 'react-toastify';
 import { GiHeartOrgan } from 'react-icons/gi';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -18,6 +19,32 @@ const data = [
 ];
 
 const HeartRate = ({ bpm }) => {
+  const bpmRef = useRef(bpm);
+  const [notification, setNotification] = useState(null);
+
+  useEffect(() => {
+    if (bpmRef.current !== bpm) {
+      bpmRef.current = bpm;
+      if (bpm < 60 || bpm > 100) {
+        setNotification('danger');
+      } else if (bpm < 70 || bpm > 90) {
+        setNotification('warning');
+      } else {
+        setNotification('success');
+      }
+    }
+  }, [bpm]);
+
+  useEffect(() => {
+    if (notification === 'danger') {
+      toast.error('El ritmo cardíaco del paciente es anormalmente alto o bajo.');
+    } else if (notification === 'warning') {
+      toast.warning('El ritmo cardíaco del paciente está ligeramente fuera del rango normal.');
+    } else if (notification === 'success') {
+      toast.success('El ritmo cardíaco del paciente está dentro del rango normal.');
+    }
+  }, [notification]);
+
   return (
     <div className="flex flex-col">
       <div className="p-6 rounded-xl">

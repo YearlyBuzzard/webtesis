@@ -1,8 +1,9 @@
 import React from 'react';
-import DoctorWelcomeCard from './DoctorWelcomeCard';
-import PatientTable from './PatientTable';
-import AlertHistory from './AlertHistoryHome';
-import Note from './Note';
+import DoctorWelcomeCard from '../components/DashboardComponents/DoctorWelcomeCard';
+import PatientTable from '../components/DashboardComponents/PatientTable';
+import AlertHistory from '../components/DashboardComponents/AlertHistoryHome';
+import Note from '../components/DashboardComponents/Note';
+import DistanceDisplay from '../components/DistanceDisplay'
 
 const notes = [
   'Nota 1',
@@ -33,8 +34,7 @@ const HomeDashboard = () => {
           <Note notes={notes} />
         </div>
         <div className="bg-white p-6 shadow-lg rounded-xl">
-          <h2 className="text-xl font-bold mb-2">Opción 6</h2>
-          <p className="text-gray-600">Contenido de la opción 6</p>
+          <DistanceDisplay/>
         </div>
       </div>
     </div>

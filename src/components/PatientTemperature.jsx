@@ -1,8 +1,7 @@
-import React from 'react';
-  import ErrorAlert from './alerts/ErrorAlert'; 
-  import WarningAlert from './alerts/WarningAlert';
-  import SuccessAlert from './alerts/SuccessAlert';
-  import { FaThermometerHalf } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaThermometerHalf } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   AreaChart,
   Area,
@@ -13,43 +12,59 @@ import {
 } from 'recharts';
 
 const data = [
-    { time: '1', value: 36.5 },
-    { time: '2', value: 36.8 },
-    { time: '3', value: 36.7 },
-    { time: '4', value: 36.6 },
-    { time: '5', value: 36.9 },
-    { time: '6', value: 36.8 },
-    { time: '7', value: 36.7 },
-  ];
+  { time: '1', value: 36.5 },
+  { time: '2', value: 36.8 },
+  { time: '3', value: 36.7 },
+  { time: '4', value: 36.6 },
+  { time: '5', value: 36.9 },
+  { time: '6', value: 36.8 },
+  { time: '7', value: 36.7 },
+];
 
-  const PatientTemperature = ({ temperature }) => {
-    let color = '';
-    let barColor = '';
-    if (temperature < 36 || temperature > 38) {
-      color = 'text-red-500';
-      barColor = 'bg-red-500';
-    } else if (temperature < 36.5 || temperature > 37.5) {
-      color = 'text-yellow-500';
-      barColor = 'bg-yellow-500';
-    } else {
-      color = 'text-green-500';
-      barColor = 'bg-green-500';
+const PatientTemperature = ({ temperature }) => {
+  const temperatureRef = useRef(temperature);
+  const [notification, setNotification] = useState(null);
+  const toastId = useRef(null);
+
+  useEffect(() => {
+    if (temperatureRef.current !== temperature) {
+      temperatureRef.current = temperature;
+      if (temperature < 35 || temperature > 38.3) {
+        setNotification('danger');
+      } else if (temperature < 36.1 || temperature > 37.2) {
+        setNotification('warning');
+      } else {
+        setNotification('success');
+      }
     }
-  
-    const chartData = [
-      ...data,
-      { time: '8', value: temperature },
-    ];
-    
-  const renderAlert = () => {
-    if (temperature < 36 || temperature > 38) {
-      return <ErrorAlert message="La temperatura del paciente es anormalmente alta o baja." />;
-    } else if (temperature < 36.5 || temperature > 37.5) {
-      return <WarningAlert message="La temperatura del paciente está ligeramente fuera del rango normal." />;
-    } else {
-      return <SuccessAlert message="La temperatura del paciente está dentro del rango normal." />;
+  }, [temperature]);
+
+  useEffect(() => {
+    if (notification && !toast.isActive(toastId.current)) {
+      if (notification === 'danger') {
+        toastId.current = toast.error('La temperatura del paciente es anormalmente alta o baja.');
+      } else if (notification === 'warning') {
+        toastId.current = toast.warning('La temperatura del paciente está ligeramente fuera del rango normal.');
+      } else if (notification === 'success') {
+        toastId.current = toast.success('La temperatura del paciente está dentro del rango normal.');
+      }
     }
-  };
+  }, [notification]);
+
+  let color = '';
+  let barColor = '';
+  if (temperature < 36 || temperature > 38) {
+    color = 'text-red-500';
+    barColor = 'bg-red-500';
+  } else if (temperature < 36.5 || temperature > 37.5) {
+    color = 'text-yellow-500';
+    barColor = 'bg-yellow-500';
+  } else {
+    color = 'text-green-500';
+    barColor = 'bg-green-500';
+  }
+
+  const chartData = [...data, { time: '8', value: temperature }];
 
   return (
     <div className="flex flex-col">
@@ -57,7 +72,7 @@ const data = [
         {<div className="text-center flex flex-col items-center">
           <h1 className="text-2xl font-bold text-blue-800 mb-4">
             Temperatura del Paciente
-            <FaThermometerHalf className="inline-block ml-2"/>
+            <FaThermometerHalf className="inline-block ml-2" />
           </h1>
           <div className={`text-6xl font-semibold ${color} mb-4`}>{temperature} °C</div>
           <div className="w-full h-4 rounded-lg overflow-hidden">
@@ -72,9 +87,6 @@ const data = [
             </AreaChart>
           </ResponsiveContainer>
         </div>}
-      </div>
-      <div className="fixed bottom-4 right-4">
-        {renderAlert()}
       </div>
     </div>
   );
