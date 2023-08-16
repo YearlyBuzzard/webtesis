@@ -6,7 +6,8 @@ import { Dashboard } from './components';
 import Pacientes from './pages/ViewPatients';
 import CrearUsuario from './pages/NewUsers';
 import Alertas from './pages/HistoryAlerts';
-import Login from './pages/Login'
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register';
 
 const App = () => {
   return (
@@ -20,11 +21,13 @@ const App = () => {
           <Route path="/Pacientes" element={<Pacientes />} />
           <Route path='/CrearUsuario' element={<CrearUsuario/>} />
           <Route path='/Alertas' element={<Alertas/>} />
+          <Route path='/RegisterAdmin' element={<Register/>} />
         </Route>
       </Routes>
     </>
   );
 };
+
 
 export default App;
 

@@ -70,7 +70,7 @@ const PatientTemperature = ({ temperature }) => {
     <div className="flex flex-col">
       <div className="bg-white p-5 rounded-xl">
         {<div className="text-center flex flex-col items-center">
-          <h1 className="text-2xl font-bold text-blue-800 mb-4">
+          <h1 className="text-2xl font-bold text-black-800 mb-4">
             Temperatura del Paciente
             <FaThermometerHalf className="inline-block ml-2" />
           </h1>

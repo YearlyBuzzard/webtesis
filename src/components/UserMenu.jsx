@@ -39,8 +39,7 @@ const UserMenu = ({ userName = 'Alejandro Sol' }) => {
 
   return (
     <div className="relative" ref={menuRef}>
-      <button onClick={toggleMenu} className="flex items-center space-x-2 text-white focus:outline-none">
-        <span>{userName}</span>
+<button onClick={toggleMenu} className="flex items-center space-x-2 font-bold text-black focus:outline-none">        <span>{userName}</span>
         <img src={userProfileImage} alt="Foto de perfil" className="w-8 h-8 rounded-full" />
       </button>
       {isOpen && (
@@ -57,7 +56,7 @@ const UserMenu = ({ userName = 'Alejandro Sol' }) => {
             </a>
           </li>
           <li>
-            <Link to="/" className="block px-4 py-2 hover:bg-gray-200">Panel de Control</Link>
+            <Link to="/Dashboard" className="block px-4 py-2 hover:bg-gray-200">Panel de Control</Link>
           </li>
 
           <li>

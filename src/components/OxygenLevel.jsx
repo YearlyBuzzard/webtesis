@@ -42,9 +42,9 @@ const OxygenLevel = ({ level }) => {
       <div className="bg-white p-6 rounded-xl h-full flex flex-col justify-center items-center">
         <div className="flex items-center mb-4">
           <GiLungs className="text-red-500 mr-2" />
-          <h1 className="text-2xl font-bold text-blue-800">Oxigenación en Sangre</h1>
+          <h1 className="text-2xl font-bold text-black">Oxigenación en Sangre</h1>
         </div>
-        <div className="text-4xl sm:text-6xl font-semibold text-purple-800 mb-2">{level}</div>
+        <div className="text-4xl sm:text-6xl font-semibold text-blue-700 mb-2">{level}</div>
         <p className="text-xl text-gray-600 mb-4">%</p>
         <div className="w-full h-full">
           <ResponsiveContainer>

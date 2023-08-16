@@ -3,6 +3,7 @@ import { ListAlertsHistory, Slider } from '../components';
 
 function HistoryAlerts() {
     return (
+        <div className="bg-gradient-to-b from-blue-200 fulls-creen">
         <div className="h-screen w-screen flex overflow-x-hidden">
             <div className="fixed">
                 <Slider/>
@@ -13,6 +14,8 @@ function HistoryAlerts() {
                 </div>
             </div>
         </div>
+        </div>
+
     );
 };
 

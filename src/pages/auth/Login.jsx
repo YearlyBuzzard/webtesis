@@ -82,10 +82,10 @@ function Login() {
                     </form>
                 </div>
                 <div className="flex items-center justify-center gap-2">
-                    <span>¿Olvidaste tu contraseña?</span>
+                    {/* <span>¿Olvidaste tu contraseña?</span>
                     <Link to="/" className="text-blue-500">
                         Recuperar
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
         </div>

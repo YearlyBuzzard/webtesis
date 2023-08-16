@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { XIcon, SaveIcon } from '@heroicons/react/outline';
 import PatientForm from '../DashboardComponents/PatientForm';
 
 const AddPatientModal = ({ isModalOpen, closeModal, onUpdate }) => {
@@ -9,20 +10,9 @@ const AddPatientModal = ({ isModalOpen, closeModal, onUpdate }) => {
         as="div"
         className="fixed inset-0 z-10 overflow-y-auto"
         onClose={closeModal}
+        onClickOutside={closeModal}
       >
         <div className="flex items-center justify-center min-h-screen px-4">
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-          </Transition.Child>
-
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -32,21 +22,15 @@ const AddPatientModal = ({ isModalOpen, closeModal, onUpdate }) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="px-6 py-4">
-                <div className="text-lg font-medium mb-2">
-                  Agregar nuevo paciente
-                </div>
-                <PatientForm onUpdate={onUpdate} />
-              </div>
-              <div className="px-6 py-4 bg-gray-100">
-                <button
-                  type="button"
-                  className="bg-gray-500 text-white py-2 px-4 rounded-lg"
-                  onClick={closeModal}
-                >
-                  Cancelar
+            <div className="bg-gray-50 rounded-lg shadow-lg overflow-hidden">
+              <div className="px-6 py-4 flex items-center justify-between">
+                <div className="text-lg font-medium">Agregar nuevo paciente</div>
+                <button className="p-1" onClick={closeModal}>
+                  <XIcon className="h-6 w-6 text-gray-500" />
                 </button>
+              </div>
+              <div className="px-6 py-4">
+                <PatientForm onUpdate={onUpdate} />
               </div>
             </div>
           </Transition.Child>

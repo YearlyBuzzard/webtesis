@@ -46,11 +46,11 @@ const PatientBloodPressure = ({ systolic, diastolic }) => {
 
   return (
     <div className="flex flex-col">
-      <div className="bg-white p-5 rounded-xl shadow-md">
+      <div className="bg-white p-5 rounded-xl">
         <div className="text-center flex flex-col items-center">
-          <h1 className="text-2xl font-bold text-blue-800 mb-4">
+          <h1 className="text-2xl font-bold text-black-800 mb-4">
             Presión Arterial del Paciente
-            <FaHeartbeat className="inline-block ml-2" />
+            <FaHeartbeat className="inline-block ml-2 " />
           </h1>
           <div className="text-6xl font-semibold text-blue-800 mb-4">
             {systolic}/{diastolic} mmHg

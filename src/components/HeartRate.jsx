@@ -49,11 +49,11 @@ const HeartRate = ({ bpm }) => {
     <div className="flex flex-col">
       <div className="p-6 rounded-xl">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-blue-800 mb-4">
+          <h1 className="text-2xl font-bold text-black-800 mb-4">
             Ritmo Cardíaco
             <GiHeartOrgan className="inline-block ml-2 text-red-500" />
           </h1>
-          <div className="text-6xl font-semibold text-purple-800 mb-2">{bpm}</div>
+          <div className="text-6xl font-semibold text-blue-700 mb-2">{bpm}</div>
           <p className="text-xl text-gray-600 mb-4">latidos/min</p>
           <div className="w-full h-[83px] mb-4">
             <ResponsiveContainer>

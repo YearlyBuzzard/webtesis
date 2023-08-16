@@ -38,7 +38,7 @@ const WeatherComponent = () => {
   const city = weather.name;
 
   return (
-    <div className="text-white text-left flex flex-col justify-center items-end h-full">
+    <div className="text-black text-left flex flex-col justify-center items-end h-full">
       <h1 className="text-1xl font-bold mb-1">{`${city}`}</h1>
       <div className="flex items-center">
         <img src={iconUrl} alt="weather icon" className="w-10 h-10 mr-2" />

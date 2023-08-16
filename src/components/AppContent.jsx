@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { MedicalCard, Nav, DistanceDisplay, HeartRate, OxygenLevel, PatientTemperature, PatientBloodPressure, Profile, Slider, Dashboard, DoctorWelcomeCard, Note, AlertHistory, PatientList, HomeDashboard, PatientForm } from ".";
+import { MedicalCard, Nav, DistanceDisplay, HeartRate, OxygenLevel, PatientTemperature, PatientBloodPressure, Slider, Dashboard, DoctorWelcomeCard, Note, AlertHistory, PatientList, HomeDashboard, PatientForm } from ".";
 import ErrorAlert from './alerts/ErrorAlert';
 import SuccessAlert from './alerts/SuccessAlert';
 
@@ -66,14 +66,13 @@ const AppContent = () => {
     <div className="bg-gradient-to-b from-blue-200 fulls-creen">
       {!isDashboard && <Nav />}
       <Routes>
-        <Route path="/perfil" element={<Profile />} />
         <Route path="/" element={
           <div className="grid grid-cols-3 gap-8 p-8">
             <div className="col-span-3 md:col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
               <HeartRate bpm={102} />
             </div>
             <div className="col-span-3 md:col-span-1 h-[320px] bg-white p-6 rounded-xl flex justify-center items-center">
-                <OxygenLevel level={90} />
+                <OxygenLevel level={75} />
             </div>
 
             <div className="col-span-3 md:col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
@@ -85,7 +84,7 @@ const AppContent = () => {
                   <PatientBloodPressure systolic={90} diastolic={102} />
                 </div>
                 <div className="bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
-                  <PatientTemperature temperature={36} />
+                  <PatientTemperature temperature={39} />
                 </div>
               </div>
             </div>

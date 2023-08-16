@@ -3,6 +3,9 @@ import { UserCircleIcon, PencilAltIcon, TrashIcon } from '@heroicons/react/solid
 import { CheckCircleIcon, ExclamationCircleIcon, XCircleIcon, InformationCircleIcon } from '@heroicons/react/outline';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import ConfirmDeleteModal from '../modal/ConfirmDeleteModal'
+
+
 const getStatusIcon = (status) => {
   switch (status) {
     case 'Stable':
@@ -17,27 +20,51 @@ const getStatusIcon = (status) => {
 };
 const PatientList = () => {
   const [patients, setPatients] = useState([]);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [patientToDelete, setPatientToDelete] = useState(null);
+
   const colors = ['bg-green-100', 'bg-red-100', 'bg-yellow-100', 'bg-pink-100', 'bg-purple-100', 'bg-blue-100'];
   const getRandomColor = (index) => {
     const randomIndex = Math.floor(Math.random() * colors.length);
     return colors[randomIndex];
   };
-  const deletePatient = async (patientId) => {
-    try {
-      await fetch(`http://localhost:3001/api/patients/${patientId}`, {
-        method: 'DELETE',
-      });
-      setPatients(patients.filter((patient) => patient.id !== patientId));
-      toast.success('El paciente ha sido eliminado correctamente', {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-    } catch (error) {
-      console.error('Error deleting patient:', error);
-      toast.error('Error al eliminar paciente', {
-        position: toast.POSITION.TOP_RIGHT,
-      });
+
+  const handleOpenDeleteModal = (patientId) => {
+    setPatientToDelete(patientId);
+    setShowDeleteModal(true);
+  };
+
+  const deletePatient = async () => {
+    if (patientToDelete) {
+      try {
+        const response = await fetch(`http://localhost:3001/api/patients/${patientToDelete}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          setPatients(patients.filter((patient) => patient.id !== patientToDelete));
+          toast.success('Paciente eliminado correctamente', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        } else {
+          toast.error('Error al eliminar paciente', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting patient:', error);
+        toast.error('Error al eliminar paciente', {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+
+      setOpenDeleteModal(false);
+      setPatientToDelete(null);
     }
   };
+
+
+
   useEffect(() => {
     const fetchPatients = async () => {
       try {
@@ -51,22 +78,22 @@ const PatientList = () => {
     fetchPatients();
   }, []);
   return (
-    <div className="bg-white p-6 rounded-xl">
-      <h2 className="text-xl font-bold mb-2">Pacientes</h2>
-      <table className="w-full">
-        <thead>
-          <tr className="border-b">
-            <th className="text-left p-2">Foto</th>
-            <th className="text-left p-2">Nombre</th>
-            <th className="text-left p-2">Edad</th>
-            <th className="text-left p-2">Género</th>
-            <th className="text-left p-2">Estado</th>
-            <th className="text-left p-2">Condición</th>
-            <th className="text-left p-2">Procedimiento</th>
-            <th className="text-left p-2">Detalles</th>
-            <th className="text-left p-2">Acciones</th>
-          </tr>
-        </thead>
+  <div className="bg-white p-6 rounded-xl">
+  <h2 className="text-xl font-bold mb-2">Pacientes</h2>
+  <div className="overflow-x-auto">
+    <table className="table-auto border-collapse w-full">
+      <thead>
+        <tr>
+          <th className="text-left px-4 py-2">Foto</th>
+          <th className="text-left px-4 py-2">Nombre</th>
+          <th className="text-left px-4 py-2">Edad</th>
+          <th className="text-left px-4 py-2">Género</th>
+          <th className="text-left px-4 py-2">Estado</th>
+          <th className="text-left px-4 py-2">Condición</th>
+          <th className="text-left px-4 py-2">Detalles</th>
+          <th className="text-left px-4 py-2">Acciones</th>
+        </tr>
+      </thead>
         <tbody>
           {patients.map((patient, index) => (
             <tr key={patient.id} className={`${index % 2 === 0 ? 'bg-gray-100' : ''}`}>
@@ -88,7 +115,6 @@ const PatientList = () => {
                   {patient.status}
                 </span>
               </td>
-              <td className="p-2">{patient.procedure}</td>
               <td className="p-2">
                 <button className="border border-sky-600 text-sky-600 py-1 px-3 hover:bg-sky-600 hover:text-white rounded-xl transition-colors">
                   <Link to="/content">
@@ -100,8 +126,13 @@ const PatientList = () => {
                 <button className="border border-green-600 text-green-600 py-1 px-3 hover:bg-green-600 hover:text-white rounded-xl transition-colors">
                   <PencilAltIcon className="h-5 w-5 inline" />
                 </button>
-                <button className="border border-red-600 text-red-600 py-1 px-3 hover:bg-red-600 hover:text-white rounded-xl transition-colors"
-                  onClick={() => deletePatient(patient.id)}>
+                <button
+                  className="border border-red-600 text-red-600 py-1 px-3 hover:bg-red-600 hover:text-white rounded-xl transition-colors"
+                  onClick={() => {
+                    setPatientToDelete(patient.id);
+                    setOpenDeleteModal(true);
+                  }}
+                >
                   <TrashIcon className="h-5 w-5 inline" />
                 </button>
               </td>
@@ -111,6 +142,12 @@ const PatientList = () => {
       </table>
       <div className="mt-4">
       </div>
+      <ConfirmDeleteModal
+        open={openDeleteModal}
+        onClose={() => setOpenDeleteModal(false)}
+        onDelete={deletePatient}
+      />
+    </div>
     </div>
   );
 };

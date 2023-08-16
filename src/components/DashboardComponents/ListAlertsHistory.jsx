@@ -53,34 +53,35 @@ const ListAlertsHistory = () => {
   
   return (
     <div className="bg-white rounded-lg p-4">
-      <div className="flex items-center mb-4">
-        <BiBell className="text-3xl text-red-500 mr-2" />
-        <h2 className="text-2xl font-bold text-gray-800">Historial de Alertas</h2>
-      </div>
-      <div className="space-y-4">
-        {alerts.map((alert, index) => (
-          <div key={index} className="border border-gray-200 rounded-lg px-4 py-2">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center">
-                {getIcon(alert.type)}
-                <h3 className="text-lg font-bold text-gray-800 ml-2">{alert.type}</h3>
-              </div>
-              <span className="text-sm text-gray-500">
-                {alert.timestamp.toLocaleDateString()} - {alert.timestamp.toLocaleTimeString()}
-              </span>
-            </div>
-            <p className="text-sm font-bold text-gray-500 mb-2">Paciente: {alert.patient}</p>
-            <div className="grid grid-cols-3 gap-4">
-            {alert.details.map((detail, detailIndex) => (
-                <div key={detailIndex} className="text-sm text-gray-600">
-                  <span className="font-semibold">{detail.label}:</span> {detail.value}
-                </div>
-              ))}
-            </div>
+  <div className="flex items-center mb-4">
+    <BiBell className="text-4xl text-red-500 mr-2" />
+    <h2 className="text-3xl font-bold text-gray-800">Historial de Alertas</h2>
+  </div>
+  <div className="space-y-4">
+    {alerts.map((alert, index) => (
+      <div key={index} className="border border-gray-200 rounded-lg px-4 py-2">
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center">
+            {getIcon(alert.type)}
+            <h3 className="text-xl font-bold text-gray-800 ml-2">{alert.type}</h3>
           </div>
-        ))}
+          <span className="text-lg text-black-500">
+            {alert.timestamp.toLocaleDateString()} - {alert.timestamp.toLocaleTimeString()}
+          </span>
+        </div>
+        <p className="text-md font-bold text-black mb-2">Paciente: {alert.patient}</p>
+        <div className="grid grid-cols-3 gap-4">
+        {alert.details.map((detail, detailIndex) => (
+            <div key={detailIndex} className="text-md text-gray-600">
+              <span className="font-semibold text-black">{detail.label}:</span> <span className="text-orange-500">{detail.value}</span>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
+
   );
 };
 
