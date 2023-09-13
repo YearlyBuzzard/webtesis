@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XIcon, SaveIcon } from '@heroicons/react/outline';
 import PatientForm from '../DashboardComponents/PatientForm';
 
-const AddPatientModal = ({ isModalOpen, closeModal, patientDetails, onUpdate }) => {
-  const isEditMode = !!patientDetails; // Verifica si hay detalles del paciente para determinar si está en modo de edición
+const EditPatientModal = ({ isModalOpen, closeModal, patient, onUpdate }) => {
+  const [editedPatient, setEditedPatient] = useState(null);
+
+  useEffect(() => {
+    if (patient) {
+      setEditedPatient(patient);
+    }
+  }, [patient]);
+
+  const handleFormChange = (event) => {
+    const { name, value } = event.target;
+    setEditedPatient((prevPatient) => ({
+      ...prevPatient,
+      [name]: value,
+    }));
+  };
+
+  const handleSaveChanges = () => {
+    onUpdate(editedPatient);
+  };
 
   return (
     <Transition appear show={isModalOpen} as={React.Fragment}>
@@ -26,15 +44,27 @@ const AddPatientModal = ({ isModalOpen, closeModal, patientDetails, onUpdate }) 
           >
             <div className="bg-gray-50 rounded-lg shadow-lg overflow-hidden">
               <div className="px-6 py-4 flex items-center justify-between">
-                <div className="text-lg font-medium">
-                  {isEditMode ? 'Editar paciente' : ' paciente'}
-                </div>
+                <div className="text-lg font-medium">Edit Patient</div>
                 <button className="p-1" onClick={closeModal}>
                   <XIcon className="h-6 w-6 text-gray-500" />
                 </button>
               </div>
               <div className="px-6 py-4">
-                <PatientForm patientDetails={patientDetails} onUpdate={onUpdate} />
+                {editedPatient && (
+                  <PatientForm
+                    patient={editedPatient}
+                    onChange={handleFormChange}
+                  />
+                )}
+              </div>
+              <div className="px-6 py-4 flex justify-end">
+                <button
+                  className="px-4 py-2 rounded-md bg-blue-500 text-white font-medium hover:bg-blue-600"
+                  onClick={handleSaveChanges}
+                >
+                  <SaveIcon className="h-5 w-5 mr-2" />
+                  Save Changes
+                </button>
               </div>
             </div>
           </Transition.Child>
@@ -44,4 +74,4 @@ const AddPatientModal = ({ isModalOpen, closeModal, patientDetails, onUpdate }) 
   );
 };
 
-export default AddPatientModal;
+export default EditPatientModal;

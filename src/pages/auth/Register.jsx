@@ -1,27 +1,40 @@
-import React, { useState } from 'react';
-import { FaUserMd, FaUser, FaRegHospital, FaEnvelope, FaLock } from 'react-icons/fa';
+import React, { useState } from "react";
+import axios from 'axios';
 
-const Register = () => {
-  const [formData, setFormData] = useState({
-    userType: '',
-    name: '',
-    email: '',
-    password: '',
-  });
+function RegistrationForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleNameChange = (e) => setName(e.target.value);
+  const handleEmailChange = (e) => setEmail(e.target.value);
+  const handlePasswordChange = (e) => setPassword(e.target.value);
+  const handleRoleChange = (e) => setRole(e.target.value);
+
+  const registerUser = async () => {
+    const url = role === 'doctor' ? 'http://localhost:3001/api/doctors' : 'http://localhost:3001/api/patients';
+    const response = await axios.post(url, {
+      name,
+      email,
+      password,
+    });
+    if (response.status === 201) {
+      console.log('Usuario registrado con éxito');
+    } else {
+      console.log('Ha ocurrido un error al registrar el usuario');
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    registerUser();
   };
 
   return (
     <div className="min-h-screen bg-[#F2F4FE] flex items-center justify-center p-4">
-       <div className="max-w-lg">
+      <div className="max-w-lg">
         <div className="flex justify-center mb-8">
-          <FaRegHospital className="text-4xl text-blue-500" />
         </div>
         <div className="bg-white w-full rounded-lg p-8 mb-8">
           <div className="flex flex-col items-center gap-1 mb-8">
@@ -31,52 +44,44 @@ const Register = () => {
             </p>
           </div>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="relative">
-            <select
-              name="userType"
-              value={formData.userType}
-              onChange={handleChange}
-              className="w-full border py-2 px-4 rounded-md outline-none"
-            >
-              <option value="" disabled>Selecciona tipo de cuenta</option>
-              <option value="doctor">Doctor</option>
-              <option value="paciente">Paciente</option>
-            </select>
-          </div>
-          <div className="relative">
-
-            <FaUser className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border py-2 pl-10 pr-4 rounded-md outline-none"
-              placeholder="Ingresa tu nombre"
-            />
-          </div>
-          <div className="relative">
-            <FaEnvelope className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full border py-2 pl-10 pr-4 rounded-md outline-none"
-              placeholder="Ingresa tu correo"
-            />
-          </div>
-          <div className="relative">
-            <FaLock className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full border py-2 pl-10 pr-4 rounded-md outline-none"
-              placeholder="Ingresa tu contraseña"
-            />
-          </div>
+            <div className="relative">
+              <input
+                type="text"
+                className="w-full border py-2 px-10 rounded-md outline-none"
+                placeholder="Ingresa tu nombre"
+                value={name}
+                onChange={handleNameChange}
+              />
+            </div>
+            <div className="relative">
+              <input
+                type="email"
+                className="w-full border py-2 px-10 rounded-md outline-none"
+                placeholder="Ingresa tu correo"
+                value={email}
+                onChange={handleEmailChange}
+              />
+            </div>
+            <div className="relative">
+              <input
+                type="password"
+                className="w-full border py-2 px-10 rounded-md outline-none"
+                placeholder="Ingresa tu contraseña"
+                value={password}
+                onChange={handlePasswordChange}
+              />
+            </div>
+            <div className="relative">
+              <select
+                value={role}
+                onChange={handleRoleChange}
+                className="w-full border py-2 px-4 rounded-md outline-none"
+              >
+                <option value="">Selecciona tu rol</option>
+                <option value="doctor">Doctor</option>
+                <option value="paciente">Paciente</option>
+              </select>
+            </div>
             <div>
               <button
                 type="submit"
@@ -88,7 +93,7 @@ const Register = () => {
           </form>
         </div>
         <span className="flex items-center justify-center gap-2">
-          ¿Ya tienes cuenta?{' '}
+          ¿Ya tienes cuenta?{" "}
           <a href="#" className="text-blue-500">
             Inicia sesión
           </a>
@@ -96,6 +101,6 @@ const Register = () => {
       </div>
     </div>
   );
-};
+}
 
-export default Register;
+export default RegistrationForm;

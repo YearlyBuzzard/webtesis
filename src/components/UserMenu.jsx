@@ -36,29 +36,32 @@ const UserMenu = ({ userName = 'Alejandro Sol' }) => {
 
   const userProfileImage = getRandomProfileImage();
 
-
   return (
     <div className="relative" ref={menuRef}>
-<button onClick={toggleMenu} className="flex items-center space-x-2 font-bold text-black focus:outline-none">        <span>{userName}</span>
+      <button
+        onClick={toggleMenu}
+        className="flex items-center space-x-2 font-bold text-black focus:outline-none"
+      >
+        <span>{userName}</span>
         <img src={userProfileImage} alt="Foto de perfil" className="w-8 h-8 rounded-full" />
       </button>
       {isOpen && (
-        <ul className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl text-gray-700">
+        <ul className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl text-gray-700 z-50">
           <li>
             <Link to="/" className="block px-4 py-2 hover:bg-gray-200">
               Perfil
             </Link>
           </li>
-
           <li>
             <a href="#" className="block px-4 py-2 hover:bg-gray-200">
               Configuración
             </a>
           </li>
           <li>
-            <Link to="/Dashboard" className="block px-4 py-2 hover:bg-gray-200">Panel de Control</Link>
+            <Link to="/Dashboard" className="block px-4 py-2 hover:bg-gray-200">
+              Panel de Control
+            </Link>
           </li>
-
           <li>
             <a href="#logout" className="block px-4 py-2 hover:bg-gray-200">
               Cerrar sesión

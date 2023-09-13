@@ -1,16 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaHome, FaUser, FaCalendar, FaPlus, FaBell, FaUserMd } from 'react-icons/fa';
 
 const Slider = ({ setActiveComponent }) => {
+  const [username, setUsername] = useState("");
+
+  const obtenerNombreUsuario = async () => {
+    try {
+      const response = await fetch('/api/getEmail');
+      if (response.ok) {
+        const data = await response.json();
+        setUsername(data.email);
+      } else {
+        console.error('Error al obtener el correo electrónico:', response.status);
+      }
+    } catch (error) {
+      console.error('Error al obtener el correo electrónico:', error);
+    }
+  };
+  useEffect(() => {
+    obtenerNombreUsuario();
+  }, []);
+
   return (
     <div className="h-screen flex items-center">
       <aside className="flex flex-col justify-between gap-8 bg-gray-100 min-h-full max-h-full w-full sm:w-80 p-4 overflow-y-hidden shadow-md z-10 m-4 rounded-lg mx-auto">
         <section>
           <div className="logo flex items-center gap-4 mb-8">
-            <img src="/logo-white.png" className="w-10 h-10 bg-indigo-600 p-2 rounded-xl" />
+            <img src="/logo-white.png" className="w-10 h-10 bg-indigo-600 p-2 rounded-xl" alt="Logo" />
             <div>
-              <h3 className="font-bold text-indigo-600">Alejandro Sol</h3>
+              <h3 className="font-bold text-indigo-600">{username}</h3>
               <p className="text-gray-800 text-xs">Desarrollo de aplicaciones</p>
             </div>
           </div>
@@ -36,13 +55,12 @@ const Slider = ({ setActiveComponent }) => {
                 <span>Agregar Pacientes</span>
               </Link>
             </li>
-          
-          <li>
-            <Link to="/Alertas" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
-              <FaUser className="w-5 h-5" />
-              <span>Historial Alertas</span>
-            </Link>
-          </li>
+            <li>
+              <Link to="/Alertas" className="flex items-center gap-4 p-2 hover:bg-gray-200 transition-colors rounded-lg">
+                <FaUser className="w-5 h-5" />
+                <span>Historial Alertas</span>
+              </Link>
+            </li>
           </ul>
         </section>
         <section>
@@ -56,11 +74,9 @@ const Slider = ({ setActiveComponent }) => {
                 <span>Ajustes</span>
               </a>
             </li>
-            <li>
-            </li>
           </ul>
           <div className="flex items-center gap-4 pt-4 border-t">
-            <img src="https://img.freepik.com/fotos-premium/retrato-viejo-mexicano-sombrero_379858-2229.jpg" className="w-10 h-10 object-cover rounded-xl ring-4 ring-gray-200" />
+            <img src="https://img.freepik.com/fotos-premium/retrato-viejo-mexicano-sombrero_379858-2229.jpg" className="w-10 h-10 object-cover rounded-xl ring-4 ring-gray-200" alt="Perfil" />
             <div>
               <h3 className="font-bold text-gray-900">Cesar Alejandro Sol</h3>
               <p className="text-gray-800 text-xs">Desarrollador fullstack</p>
@@ -71,4 +87,5 @@ const Slider = ({ setActiveComponent }) => {
     </div>
   )
 }
+
 export default Slider;

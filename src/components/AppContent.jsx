@@ -1,59 +1,45 @@
 import React, { useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { MedicalCard, Nav, DistanceDisplay, HeartRate, OxygenLevel, PatientTemperature, PatientBloodPressure, Slider, Dashboard, DoctorWelcomeCard, Note, AlertHistory, PatientList, HomeDashboard, PatientForm } from ".";
-import ErrorAlert from './alerts/ErrorAlert';
-import SuccessAlert from './alerts/SuccessAlert';
+import { AiOutlineCamera } from 'react-icons/ai';
+import { Card, CardBody, CardFooter, Typography, Button } from "@material-tailwind/react";
+
+import { MedicalCard, Nav, DistanceDisplay, HeartRate, OxygenLevel, PatientTemperature, PatientBloodPressure, Dashboard, CameraComponent } from ".";
+
+let alertId = 0; // define outside of the component
 
 const AppContent = () => {
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard';
 
-  const [successAlerts, setSuccessAlerts] = useState([]);
-  const [errorAlerts, setErrorAlerts] = useState([]);
+  const [alerts, setAlerts] = useState([]);
 
-  const addSuccessAlert = (message) => {
-    setSuccessAlerts((prevAlerts) => [
+  const addAlert = (message, type) => {
+    setAlerts((prevAlerts) => [
       ...prevAlerts,
-      { id: Date.now(), message },
+      { id: alertId++, message, type }, // use incremental id
     ]);
   };
 
-  const addErrorAlert = (message) => {
-    setErrorAlerts((prevAlerts) => [
-      ...prevAlerts,
-      { id: Date.now(), message },
-    ]);
-  };
-
-  const removeSuccessAlert = (id) => {
-    setSuccessAlerts((prevAlerts) =>
-      prevAlerts.filter((alert) => alert.id !== id)
-    );
-  };
-
-  const removeErrorAlert = (id) => {
-    setErrorAlerts((prevAlerts) =>
+  const removeAlert = (id) => {
+    setAlerts((prevAlerts) =>
       prevAlerts.filter((alert) => alert.id !== id)
     );
   };
 
   const renderAlerts = () => {
-    if (successAlerts.length > 0 || errorAlerts.length > 0) {
+    if (alerts.length > 0) {
       return (
         <div className="fixed bottom-4 right-4 flex flex-col space-y-4">
-          {successAlerts.map((alert) => (
-            <SuccessAlert
-              key={alert.id}
-              message={alert.message}
-              onClose={() => removeSuccessAlert(alert.id)}
-            />
-          ))}
-          {errorAlerts.map((alert) => (
-            <ErrorAlert
-              key={alert.id}
-              message={alert.message}
-              onClose={() => removeErrorAlert(alert.id)}
-            />
+          {alerts.map((alert) => (
+            <div key={alert.id} className={`bg-${alert.type}-200 p-4 rounded-md`}>
+              {alert.message}
+              <button
+                className="ml-2 text-red-500"
+                onClick={() => removeAlert(alert.id)}
+              >
+                Cerrar
+              </button>
+            </div>
           ))}
         </div>
       );
@@ -63,50 +49,50 @@ const AppContent = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-blue-200 fulls-creen">
+    <div className="bg-gradient-to-b from-blue-200 h-screen">
       {!isDashboard && <Nav />}
       <Routes>
-        <Route path="/" element={
-          <div className="grid grid-cols-3 gap-8 p-8">
-            <div className="col-span-3 md:col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
-              <HeartRate bpm={102} />
-            </div>
-            <div className="col-span-3 md:col-span-1 h-[320px] bg-white p-6 rounded-xl flex justify-center items-center">
-                <OxygenLevel level={75} />
-            </div>
-
-            <div className="col-span-3 md:col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
-              {/* Aquí va el espacio para la foto */}
-            </div>
-            <div className="col-span-3 md:col-span-2 h-[320px]">
-              <div className="grid grid-cols-2 gap-8 h-full">
-                <div className="bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
-                  <PatientBloodPressure systolic={90} diastolic={102} />
-                </div>
-                <div className="bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
-                  <PatientTemperature temperature={39} />
-                </div>
+        <Route
+          path="/"
+          element={
+            <div className="grid grid-rows-2 grid-cols-3 gap-8 p-8 h-full">
+              <div className="row-span-1 col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
+                <HeartRate bpm={80} />
+              </div>
+              <div className="row-span-1 col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
+                <OxygenLevel level={145300} />
+              </div>
+              <div className="row-span-1 col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex items-center justify-center">
+                <CameraComponent />
+              </div>
+              <div className="row-span-1 col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
+                <PatientBloodPressure systolic={15} diastolic={82} />
+              </div>
+              <div className="row-span-1 col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center">
+                <PatientTemperature
+                  temperature={37}
+                  addAlert={addAlert}
+                />
+              </div>
+              <div className="row-span-1 col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl">
+                <Card>
+                  <CardBody>
+                    <Typography variant="h5" color="blue-gray" className="mb-2">
+                      Historial de Alertas Médicas
+                    </Typography>
+                    {/* alerts logic removed from here */}
+                  </CardBody>
+                  <CardFooter className="pt-0">
+                    <Button color="blue">Detalles</Button>
+                  </CardFooter>
+                </Card>
               </div>
             </div>
-            <div className="fixed bottom-4 right-4 flex flex-col space-y-4">
-              {successAlerts.map((alert) => (
-                <SuccessAlert
-                  key={alert.id}
-                  message={alert.message}
-                  onClose={() => removeSuccessAlert(alert.id)}
-                />
-              ))}
-              {errorAlerts.map((alert) => (
-                <ErrorAlert
-                  key={alert.id}
-                  message={alert.message}
-                  onClose={() => removeErrorAlert(alert.id)}
-                />
-              ))}
-            </div>
-          </div>} />
+          }
+        />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
+      {renderAlerts()}
     </div>
   );
 };
