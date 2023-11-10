@@ -1,19 +1,19 @@
 import React from 'react';
 import Clock from './Clock';
 import UserMenu from './UserMenu';
-import WeatherComponent from './WeatherComponent';
+import NotificationCenter from "./NotificationCenter/NotificationCenter";
 
 const Navbar = ({ userName }) => {
   return (
-    <div className="flex justify-between items-center bg-gray-800 p-4 backdrop-blur-md">
+    <div className="flex justify-between items-center bg-transparent p-4 backdrop-blur-md z-50">
       <div className="flex items-center">
-        <Clock />
-        <div className="mx-4">
-          <WeatherComponent/>
-        </div>
+        <Clock/>
       </div>
-      <UserMenu userName={userName} />
-      <div className="absolute inset-0 z-[-1] bg-black opacity-50"></div>
+      <div className="flex items-center space-x-4">
+        <UserMenu userName={userName} />
+        <NotificationCenter />
+
+      </div>
     </div>
   );
 };

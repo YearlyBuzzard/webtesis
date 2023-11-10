@@ -18,9 +18,11 @@ const Clock = () => {
   });
 
   return (
-    <div className="text-white text-left flex flex-col justify-center items-end h-full">
-      <div className="text-2xl font-bold">{time.toLocaleTimeString()}</div>
-      <div className="text-1xl">{formattedDate}</div>
+    <div className="text-black text-left flex flex-col justify-center items-end h-full">
+      <div className="text-2xl font-bold text-shadow-md">
+        {time.toLocaleTimeString()}
+      </div>
+      <div className="text-1xl text-shadow-md">{formattedDate}</div>
     </div>
   );
 };

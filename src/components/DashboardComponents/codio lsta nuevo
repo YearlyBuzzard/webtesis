@@ -1,0 +1,183 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { InformationCircleIcon, PencilIcon, TrashIcon } from '@heroicons/react/outline';
+import { toast } from 'react-toastify';
+import { Chip, Card, CardHeader, Typography, Button, CardBody, IconButton, Tooltip, CardFooter } from "@material-tailwind/react";
+import ConfirmDeleteModal from '../modal/ConfirmDeleteModal';
+
+const TABLE_HEAD = ["Member", "Age", "Gender", "Status", "Condition", "Details", "Actions"];
+
+const getStatusIcon = (status) => {
+  switch (status) {
+    case 'Stable':
+      return { value: "Stable", color: "green" };
+    case 'Serious':
+      return { value: "Serious", color: "yellow" };
+    case 'Critical':
+      return { value: "Critical", color: "red" };
+    default:
+      return { value: "Unknown", color: "gray" }; // Opción predeterminada para estados desconocidos
+  }
+};
+
+const PatientList = () => {
+  const [patients, setPatients] = useState([]);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [patientToDelete, setPatientToDelete] = useState(null);
+
+  const fetchPatients = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/patients');
+      const data = await response.json();
+      setPatients(data);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
+
+  const handleOpenDeleteModal = (patientId) => {
+    setPatientToDelete(patientId);
+    setOpenDeleteModal(true);
+  };
+
+  const deletePatient = async () => {
+    if (patientToDelete) {
+      try {
+        const response = await fetch(`http://localhost:3001/api/patients/${patientToDelete}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          setPatients(patients.filter((patient) => patient.id !== patientToDelete));
+          toast.success('Paciente eliminado correctamente', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        } else {
+          toast.error('Error al eliminar paciente', {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting patient:', error);
+        toast.error('Error al eliminar paciente', {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+
+      setOpenDeleteModal(false);
+      setPatientToDelete(null);
+    }
+  };
+
+  return (
+    <Card className="h-full w-full">
+      <CardHeader floated={false} shadow={false} className="rounded-none">
+        <div className="mb-8 flex items-center justify-between gap-8">
+          <div>
+            <Typography variant="h5" color="blue-gray">
+              Patient List
+            </Typography>
+            <Typography color="gray" className="mt-1 font-normal">
+              See information about all patients
+            </Typography>
+          </div>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <Button variant="outlined" color="blue-gray" size="sm">
+              view all
+            </Button>
+            <Button className="flex items-center gap-3" color="blue" size="sm">
+              Add Patient
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardBody className="overflow-scroll px-0">
+        <table className="mt-4 w-full min-w-max table-auto text-left">
+          <thead>
+            <tr>
+              {TABLE_HEAD.map((head) => (
+                <th key={head} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                  >
+                    {head}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {patients.map((patient, index) => {
+              const status = getStatusIcon(patient.status);
+              const classes = index === patients.length - 1 ? "p-4" : "p-4 border-b border-blue-gray-100";
+              return (
+                <tr key={patient.id} className={classes}>
+                  <td>
+                    <div className="flex items-center gap-2">
+                      <div className="rounded-full bg-blue-500 h-10 w-10 flex items-center justify-center">
+                        <span className="font-medium text-sm text-white">{patient.name[0]}</span>
+                      </div>
+                      <span className="font-medium">{patient.name}</span>
+                    </div>
+                  </td>
+                  <td>{patient.age}</td>
+                  <td>{patient.gender}</td>
+                  <td>
+                    <Chip color={status.color} variant="solid" size="sm">
+                      {status.value}
+                    </Chip>
+                  </td>
+                  <td>{patient.condition}</td>
+                  <td>
+                    <IconButton className="p-1" color="lightBlue">
+                      <Tooltip title="View Details">
+                        <InformationCircleIcon className="h-5 w-5" />
+                      </Tooltip>
+                    </IconButton>
+                  </td>
+                  <td>
+                    <div className="flex space-x-2">
+                      <IconButton color="blue" size="small">
+                        <PencilIcon strokeWidth={2} className="h-4 w-4" />
+                      </IconButton>
+                      <IconButton
+                        color="red"
+                        size="small"
+                        onClick={() => handleOpenDeleteModal(patient.id)}
+                      >
+                        <TrashIcon strokeWidth={2} className="h-4 w-4" />
+                      </IconButton>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </CardBody>
+      <CardFooter>
+        <div className="flex justify-end gap-2">
+          <Button size="sm" color="blue-gray" variant="outlined">
+            Previous
+          </Button>
+          <Button size="sm" color="blue-gray" variant="outlined">
+            Next
+          </Button>
+        </div>
+      </CardFooter>
+      <ConfirmDeleteModal
+        open={openDeleteModal}
+        onClose={() => setOpenDeleteModal(false)}
+        onDelete={deletePatient}
+      />
+    </Card>
+  );
+};
+
+export default PatientList;
