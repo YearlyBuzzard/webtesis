@@ -1,11 +1,34 @@
 const express = require('express');
 const cors = require('cors');
-const connection = require('./db');
+const mqtt = require('mqtt');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Configuración del cliente MQTT
+
+
+
+const mqttClient = mqtt.connect('mqtt://test.mosquitto.org'); // Reemplaza con la URL de tu broker MQTT
+let lastTemperature = 0;
+
+mqttClient.on('connect', () => {
+  console.log('Conectado a MQTT Broker');
+  mqttClient.subscribe('temperatura/photon'); // Suscribirse al tópico de temperatura
+});
+
+mqttClient.on('message', (topic, message) => {
+  if (topic === 'temperatura/photon') {
+    lastTemperature = parseFloat(message.toString());
+    console.log(`Temperatura recibida: ${lastTemperature}`); // Verifica si se imprime esto
+  }
+});
+
+app.get('/api/temperature', (req, res) => {
+  res.json({ temperature: lastTemperature });
+});
 
 // código para registrar doctores
 app.post('/api/doctors', (req, res) => {
@@ -59,7 +82,6 @@ app.patch('/api/patients/:id', (req, res) => {
 });
 
 //Codigo y conexion para inciar sesion
-
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -93,7 +115,6 @@ app.post('/api/login', (req, res) => {
   );
 });
 
-
 app.get('/api/getEmail', (req, res) => {
   const userId = req.userId;
 
@@ -115,7 +136,6 @@ app.get('/api/getEmail', (req, res) => {
     }
   );
 });
-
 
 //Conexion de la tabla del home
 app.get('/api/patients', (req, res) => {
