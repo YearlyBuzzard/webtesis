@@ -75,6 +75,12 @@ const handleDateChange = (date) => {
             });
             isValid = false;
         }
+        if (!birthdate) {
+            toast.error('Por favor, completa el campo Fecha de nacimiento', {
+                position: toast.POSITION.TOP_RIGHT,
+            });
+            isValid = false;
+        }
 
         if (!gender) {
             toast.error('Por favor, selecciona un género', {
@@ -115,6 +121,7 @@ const handleDateChange = (date) => {
         setName('');
         setPaternalLastName('');
         setMaternalLastName('');
+        setBirthdate('');
         setAge('');
         setGender('');
         setCurp('');
@@ -150,7 +157,6 @@ const handleDateChange = (date) => {
                     </div>
                 </div>
             </div>
-            
             <div className="w-full flex flex-col gap-y-2">
                 <div>
                 <label>Fecha de Nacimiento <span className="text-red-500">*</span></label>
@@ -163,7 +169,7 @@ const handleDateChange = (date) => {
                     />
                 </LocalizationProvider>
                 <div className="w-full flex flex-col gap-y-2">
-                <label>Edad Calculada</label>
+                <label>Edad</label>
                 <input
                     type="text"
                     value={age}

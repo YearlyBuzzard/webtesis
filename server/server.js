@@ -48,11 +48,11 @@ app.post('/api/doctors', (req, res) => {
 
 //codigo para el form del paciente
 app.post('/api/patients', (req, res) => {
-  const { name, paternalLastName, maternalLastName, age, gender, CURP, email, password } = req.body;
+  const { name, paternalLastName, maternalLastName, age, birthdate, gender, CURP, email, password } = req.body;
 
   connection.query(
-    'INSERT INTO patients (name, paternalLastName, maternalLastName, age, gender, CURP, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [name, paternalLastName, maternalLastName, age, gender, CURP, email, password],
+    'INSERT INTO patients (name, paternalLastName, maternalLastName, age, birthdate, gender, CURP, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [name, paternalLastName, maternalLastName, age, birthdate, gender, CURP, email, password],
     (error, results) => {
       if (error) {
         res.status(500).json({ error });
