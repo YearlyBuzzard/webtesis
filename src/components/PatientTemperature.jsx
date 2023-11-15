@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { toast } from 'react-toastify';
 import { FaThermometerHalf } from 'react-icons/fa';
-import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Label } from 'recharts';
 
 const PatientTemperature = ({ initialTemperature = 36.5 }) => {
   const [temperature, setTemperature] = useState(initialTemperature);
+  const [temperatureRange, setTemperatureRange] = useState('Normal');
   const [chartData, setChartData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const lastNotification = useRef(null); // Ref para rastrear la última notificación
 
   useEffect(() => {
     const fetchTemperature = async () => {
@@ -22,18 +25,36 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
     };
 
     const intervalId = setInterval(fetchTemperature, 5000);
-
     return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    setChartData(prevData => [...prevData.slice(-11), { time: new Date().toLocaleTimeString(), value: temperature }]);
+    let statusMessage = `Normal: ${temperature.toFixed(1)} °C`;
+    if (temperature < 35.0 || temperature > 38.9) {
+      statusMessage = `Peligro: ${temperature.toFixed(1)} °C`;
+    } else if (temperature <= 36.0 || temperature >= 37.3) {
+      statusMessage = `Precaución: ${temperature.toFixed(1)} °C`;
+    }
+
+    setTemperatureRange(statusMessage);
+
+    setChartData(prevData => [...prevData.slice(-11), { 
+      time: new Date().toLocaleTimeString(), 
+      value: temperature, 
+      range: statusMessage 
+    }]);
+
+    if (statusMessage.startsWith('Peligro') && lastNotification.current !== 'Peligro') {
+      toast.error(`Peligro: La temperatura del paciente es ${temperature.toFixed(1)} °C, anormalmente alta o baja.`);
+      lastNotification.current = 'Peligro';
+    } else if (statusMessage.startsWith('Normal') && lastNotification.current !== 'Normal') {
+      toast.success(`Normal: La temperatura del paciente es ${temperature.toFixed(1)} °C.`);
+      lastNotification.current = 'Normal';
+    }
   }, [temperature]);
 
-  // Determina el color según la temperatura
   let color = '';
   let colorValue = '';
-
   if (temperature < 35.0 || temperature > 38.9) {
     color = 'text-red-500';
     colorValue = '#EF4444';
@@ -63,7 +84,7 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
               <Area type="monotone" dataKey="value" stroke="none" fill={colorValue} fillOpacity={0.2} />
               <YAxis hide domain={['auto', 'auto']} />
               <XAxis hide dataKey="time" />
-              <Tooltip />
+              <Tooltip formatter={(value, name, props) => [props.payload.range, 'Estado']} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -84,8 +105,10 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
                   <ResponsiveContainer>
                     <AreaChart data={chartData}>
                       <XAxis dataKey="time" />
-                      <YAxis />
-                      <Tooltip />
+                      <YAxis>
+                        <Label value="Temperatura (°C)" angle={-90} position="insideLeft" />
+                      </YAxis>
+                      <Tooltip formatter={(value, name, props) => [props.payload.range, 'Estado']} />
                       <Area type="monotone" dataKey="value" fill={colorValue} stroke={colorValue} />
                     </AreaChart>
                   </ResponsiveContainer>

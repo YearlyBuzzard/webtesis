@@ -1,7 +1,7 @@
 import React from 'react';
 
 const DoctorWelcomeCard = ({ firstName, lastName }) => {
-  const initials = `${firstName ? firstName[0] : 'N'}${lastName ? lastName[0] : 'N'}`;
+  const initials = `${firstName ? firstName[0] : ''}${lastName ? lastName[0] : ''}`;
 
   return (
     <div className="bg-white rounded-lg p-6 flex flex-col md:flex-row items-center space-x-4">
@@ -10,7 +10,7 @@ const DoctorWelcomeCard = ({ firstName, lastName }) => {
       </span>
       <div>
         <h2 className="text-xl font-semibold text-gray-800">
-          ¡Bienvenido, Dr/a. {lastName}!
+          ¡Bienvenido, Dr/a. {lastName || ''}!
         </h2>
         <p className="text-gray-600">
           Le deseamos un excelente día en su práctica médica.

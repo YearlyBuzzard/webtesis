@@ -20,17 +20,14 @@ function Login() {
                 const response = await axios.post('http://localhost:3001/api/login', {
                     email,
                     password,
-                });
+                  });
+                  
+                  if (response.status === 200) {
+                    sessionStorage.setItem('userFirstName', response.data.admin.nombre);
+                    sessionStorage.setItem('userLastName', response.data.admin.apellido);
+                    navigate('/Dashboard');
+                  }
 
-                if (response.status === 200) {
-                    // Suponiendo que la respuesta del servidor incluye el nombre en 'response.data.admin.name'
-                    sessionStorage.setItem('userName', response.data.admin.name); // Almacena el nombre del usuario
-                    navigate('/Dashboard'); // Redirige al usuario al dashboard
-                    // En tu componente de inicio de sesión, después de un inicio de sesión exitoso
-                    sessionStorage.setItem('userFirstName', response.data.admin.nombre); // Ajusta esto según la respuesta real de tu backend
-                    sessionStorage.setItem('userLastName', response.data.admin.apellido); // Ajusta esto según la respuesta real de tu backend
-
-                }
             } catch (error) {
                 if (error.response) {
                     // Si hay respuesta del servidor con un mensaje de error específico

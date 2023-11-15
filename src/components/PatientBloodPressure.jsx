@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { FaHeartbeat } from 'react-icons/fa';
-import { AreaChart, Area, YAxis, Tooltip, XAxis, ResponsiveContainer, Legend, LabelList } from 'recharts';
+import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Legend, Label } from 'recharts';
 import 'react-toastify/dist/ReactToastify.css';
 
 const PatientBloodPressure = () => {
@@ -9,6 +9,7 @@ const PatientBloodPressure = () => {
   const [diastolic, setDiastolic] = useState(80);
   const [data, setData] = useState([]);
   const [notification, setNotification] = useState(null);
+  const lastNotification = useRef(null); // Ref para rastrear la última notificación
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -18,7 +19,7 @@ const PatientBloodPressure = () => {
       setSystolic(newSystolic);
       setDiastolic(newDiastolic);
       setData((prevData) => [
-        ...prevData.slice(-11), // Mantener solo los últimos 11 registros para la gráfica
+        ...prevData.slice(-11),
         { time: new Date().toLocaleTimeString(), systolic: newSystolic, diastolic: newDiastolic },
       ]);
     }, 10000);
@@ -27,48 +28,44 @@ const PatientBloodPressure = () => {
   }, []);
 
   useEffect(() => {
+    let statusMessage;
     if (systolic < 90 || systolic > 140 || diastolic < 60 || diastolic > 90) {
-      setNotification('danger');
+      statusMessage = 'Peligro';
+      if (lastNotification.current !== statusMessage) {
+        toast.error(`Peligro: La presión arterial del paciente es ${systolic}/${diastolic} mmHg, anormalmente alta o baja.`);
+      }
     } else if ((systolic >= 90 && systolic <= 120) && (diastolic >= 60 && diastolic <= 80)) {
-      setNotification('success');
-    } else {
-      setNotification('warning');
-    }
-  }, [systolic, diastolic]);
-
-  useEffect(() => {
-    if (notification) {
-      if (notification === 'danger') {
-        toast.error('La presión arterial del paciente es anormalmente alta o baja.');
-      } else if (notification === 'warning') {
-        toast.warning('La presión arterial del paciente está ligeramente fuera del rango normal.');
-      } else if (notification === 'success') {
-        toast.success('La presión arterial del paciente está dentro del rango normal.');
+      statusMessage = 'Normal';
+      if (lastNotification.current !== statusMessage) {
+        toast.success(`Normal: La presión arterial del paciente es ${systolic}/${diastolic} mmHg.`);
       }
     }
-  }, [notification]);
+
+    setNotification(statusMessage);
+    lastNotification.current = statusMessage;
+  }, [systolic, diastolic]);
 
   let color = '';
   let colorValue = '';
-  if (notification === 'danger') {
+  if (notification === 'Peligro') {
     color = 'text-red-500';
-    colorValue = '#EF4444'; // red
+    colorValue = '#EF4444';
   } else if (notification === 'warning') {
     color = 'text-yellow-500';
-    colorValue = '#FBBF24'; // yellow
+    colorValue = '#FBBF24';
   } else {
     color = 'text-green-500';
-    colorValue = '#10B981'; // green
+    colorValue = '#10B981';
   }
 
   const handleClose = () => setIsModalOpen(false);
   const handleShow = () => setIsModalOpen(true);
 
   return (
-    <div className="flex flex-col w-full h-full"> {/* Asegúrate de que el componente principal ocupe todo el espacio disponible */}
-      <div className="bg-white p-5 rounded-xl w-full" onClick={handleShow}> {/* Aquí también nos aseguramos de que el div ocupe todo el ancho */}
-        <div className="text-center flex flex-col items-center w-full"> {/* Establece el ancho a todo el contenedor */}
-          <h1 className="text-2xl font-bold text-blue-800 mb-4 w-full">Presión Arterial<FaHeartbeat className="inline-block ml-2" /></h1> {/* Estira el título para ocupar el ancho completo */}
+    <div className="flex flex-col w-full h-full">
+      <div className="bg-white p-5 rounded-xl w-full" onClick={handleShow}>
+        <div className="text-center flex flex-col items-center w-full">
+          <h1 className="text-2xl font-bold text-blue-800 mb-4 w-full">Presión Arterial <FaHeartbeat className="inline-block ml-2" /></h1>
           <div className={`text-5xl font-semibold ${color} mb-4`}>{systolic}/{diastolic} mmHg</div>
           <ResponsiveContainer width="100%" height={100}>
             <AreaChart data={data} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
@@ -94,16 +91,12 @@ const PatientBloodPressure = () => {
                     </h3>
                     <ResponsiveContainer width="100%" height={500}>
                       <AreaChart data={data}>
-                        <XAxis dataKey="time" />
-                        <YAxis />
+                        <XAxis dataKey="time"/>
+                        <YAxis label={{ value: 'mmHg', angle: -90, position: 'insideLeft' }} />
                         <Tooltip />
                         <Legend verticalAlign="top" height={36} />
-                        <Area name="Systolic" type="monotone" dataKey="systolic" stroke="blue" fill={colorValue} fillOpacity={0.6}>
-                          <LabelList dataKey="systolic" position="top" offset={4} />
-                        </Area>
-                        <Area name="Diastolic" type="monotone" dataKey="diastolic" stroke="red" fill={colorValue} fillOpacity={0.5}>
-                          <LabelList dataKey="diastolic" position="bottom" offset={4} />
-                        </Area>
+                        <Area name="Sistólica" type="monotone" dataKey="systolic" stroke="blue" fill={colorValue} fillOpacity={0.6} />
+                        <Area name="Diastólica" type="monotone" dataKey="diastolic" stroke="red" fill={colorValue} fillOpacity={0.5} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
@@ -118,7 +111,6 @@ const PatientBloodPressure = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

@@ -39,7 +39,7 @@ const HomeDashboard = () => {
           <Note notes={notes} />
         </div>
         <div className="bg-white p-6 shadow-lg rounded-xl">
-          <DistanceDisplay/>
+          <DistanceDisplay />
         </div>
       </div>
     </div>

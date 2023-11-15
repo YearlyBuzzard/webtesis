@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mqtt = require('mqtt');
+const connection = require('./db');
+const crypto = require('crypto');
 
 const app = express();
 app.use(cors());
@@ -8,8 +10,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configuración del cliente MQTT
-
-
 
 const mqttClient = mqtt.connect('mqtt://test.mosquitto.org'); // Reemplaza con la URL de tu broker MQTT
 let lastTemperature = 0;
@@ -96,16 +96,19 @@ app.post('/api/login', (req, res) => {
           res.status(404).json({ message: 'Email no encontrado' });
         } else {
           const admin = results[0];
-          // Aquí debes comparar la contraseña después de aplicar el mismo hash que usaste al guardarla
-          if (hash(password) !== admin.contraseña) {
+
+          // Hashing the entered password using SHA-256
+          const hashedPassword = crypto.createHash('sha256').update(password).digest('hex');
+
+          if (hashedPassword !== admin.password) {
             res.status(401).json({ message: 'Contraseña incorrecta' });
           } else {
             // Envía el nombre y apellido como parte de la respuesta
             res.status(200).json({ 
               message: 'Inicio de sesión exitoso', 
               admin: {
-                name: admin.nombre,
-                lastName: admin.apellido
+                nombre: admin.nombre,  // Asegúrate de que 'admin.nombre' tenga el valor correcto
+                apellido: admin.apellido  // Asegúrate de que 'admin.apellido' tenga el valor correcto
               }
             });
           }

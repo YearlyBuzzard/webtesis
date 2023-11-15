@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import { RiUserLine, RiMailLine, RiLockPasswordLine } from 'react-icons/ri';
 import { BiMaleSign, BiFemaleSign } from 'react-icons/bi';
-import { MdDateRange } from 'react-icons/md';
-import { toast } from 'react-toastify';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import TextField from '@mui/material/TextField';
+import dayjs from 'dayjs';
 
 
 const PatientForm = () => {
+    const [birthdate, setBirthdate] = useState(null);
     const [name, setName] = useState('');
     const [paternalLastName, setPaternalLastName] = useState('');
     const [maternalLastName, setMaternalLastName] = useState('');
@@ -15,6 +19,14 @@ const PatientForm = () => {
     const [CURP, setCurp] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+const handleDateChange = (date) => {
+    setBirthdate(date);
+    const now = dayjs();
+    const birthDate = dayjs(date);
+    const calculatedAge = now.diff(birthDate, 'year');
+    setAge(calculatedAge);
+};
 
 
     const submitPatient = async (patientData) => {
@@ -99,7 +111,7 @@ const PatientForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-        submitPatient({ name, paternalLastName, maternalLastName, age, gender, CURP, email, password });
+        submitPatient({ name, paternalLastName, maternalLastName, age, birthdate, gender, CURP, email, password });
         setName('');
         setPaternalLastName('');
         setMaternalLastName('');
@@ -112,7 +124,7 @@ const PatientForm = () => {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <h2 className="text-xl font-bold mb-2">Nuevo Paciente</h2>
+            <h2 className="text-xl font-bold mb-2">Formulario</h2>
             <div className="px-4 py-8 flex flex-col md:flex-row md:items-center md:justify-center gap-8">
                 <div className="w-full flex flex-col gap-y-2">
                     <label>Nombre(s) <span className="text-red-500">*</span></label>
@@ -138,14 +150,27 @@ const PatientForm = () => {
                     </div>
                 </div>
             </div>
+            
             <div className="w-full flex flex-col gap-y-2">
                 <div>
-                    <label>Edad <span className="text-red-500">*</span> </label>
-                    <div className="relative">
-                        <MdDateRange className="text-gray-500 absolute top-1/2 -translate-y-1/2 left-4" />
-                        <input id="age" type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full bg-gray-100 py-2 pl-10 pr-4 rounded-lg outline-none"
-                            placeholder="Ingresa la edad" />
-                    </div>
+                <label>Fecha de Nacimiento <span className="text-red-500">*</span></label>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                        label="Fecha de Nacimiento"
+                        value={birthdate}
+                        onChange={handleDateChange}
+                        renderInput={(params) => <TextField {...params} />}
+                    />
+                </LocalizationProvider>
+                <div className="w-full flex flex-col gap-y-2">
+                <label>Edad Calculada</label>
+                <input
+                    type="text"
+                    value={age}
+                    className="w-full bg-gray-100 py-2 px-4 rounded-lg outline-none"
+                    disabled
+                />
+            </div>
                 </div>
                 <div>
                     <div className="w-full flex flex-col gap-y-2">

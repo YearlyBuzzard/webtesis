@@ -27,7 +27,7 @@ const AddPatientModal = ({ isModalOpen, closeModal, patientDetails, onUpdate }) 
             <div className="bg-gray-50 rounded-lg shadow-lg overflow-hidden">
               <div className="px-6 py-4 flex items-center justify-between">
                 <div className="text-lg font-medium">
-                  {isEditMode ? 'Editar paciente' : ' paciente'}
+                  {isEditMode ? 'Editar paciente' : 'Nuevo Paciente'}
                 </div>
                 <button className="p-1" onClick={closeModal}>
                   <XIcon className="h-6 w-6 text-gray-500" />
