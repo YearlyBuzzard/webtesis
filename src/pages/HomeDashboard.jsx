@@ -3,7 +3,6 @@ import DoctorWelcomeCard from '../components/DashboardComponents/DoctorWelcomeCa
 import PatientTable from '../components/DashboardComponents/PatientTable';
 import AlertHistory from '../components/DashboardComponents/AlertHistoryHome';
 import Note from '../components/DashboardComponents/Note';
-import DistanceDisplay from '../components/DistanceDisplay'
 
 const notes = [
   'Nota 1',
@@ -37,9 +36,6 @@ const HomeDashboard = () => {
 
         <div className="bg-white p-6 shadow-lg rounded-xl">
           <Note notes={notes} />
-        </div>
-        <div className="bg-white p-6 shadow-lg rounded-xl">
-          <DistanceDisplay />
         </div>
       </div>
     </div>

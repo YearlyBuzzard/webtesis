@@ -10,16 +10,14 @@ import dayjs from 'dayjs';
 
 
 const PatientForm = () => {
-    const [birthdate, setBirthdate] = useState(null);
     const [name, setName] = useState('');
     const [paternalLastName, setPaternalLastName] = useState('');
     const [maternalLastName, setMaternalLastName] = useState('');
+    const [birthdate, setBirthdate] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
     const [CURP, setCurp] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
+   
 const handleDateChange = (date) => {
     setBirthdate(date);
     const now = dayjs();
@@ -27,7 +25,6 @@ const handleDateChange = (date) => {
     const calculatedAge = now.diff(birthDate, 'year');
     setAge(calculatedAge);
 };
-
 
     const submitPatient = async (patientData) => {
         try {
@@ -68,15 +65,15 @@ const handleDateChange = (date) => {
             });
             isValid = false;
         }
-
-        if (!age) {
-            toast.error('Por favor, completa el campo Edad', {
+        if (!birthdate){
+            toast.error('Por favor, completa rl campo fecha de nacimiento', {
                 position: toast.POSITION.TOP_RIGHT,
             });
             isValid = false;
         }
-        if (!birthdate) {
-            toast.error('Por favor, completa el campo Fecha de nacimiento', {
+
+        if (!age) {
+            toast.error('Por favor, completa el campo Edad', {
                 position: toast.POSITION.TOP_RIGHT,
             });
             isValid = false;
@@ -90,23 +87,8 @@ const handleDateChange = (date) => {
         }
 
         if (!CURP) {
-            toast.error('Por favor, selecciona el estado del paciente', {
+            toast.error('Por favor, agrega la CURP del paciente', {
                 position: toast.POSITION.TOP_RIGHT,
-            });
-            isValid = false;
-        }
-
-        if (!email) {
-            toast.error('Por favor, ingresa un correo del paciente', {
-                position: toast.POSITION.TOP_RIGHT,
-            });
-            isValid = false;
-        }
-
-        if (!password) {
-            toast.error('Por favor, ingresa un contraseña para el paciente', {
-                position: toast.POSITION.TOP_RIGHT,
-                icon: "🚀"
             });
             isValid = false;
         }
@@ -117,7 +99,7 @@ const handleDateChange = (date) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-        submitPatient({ name, paternalLastName, maternalLastName, age, birthdate, gender, CURP, email, password });
+        submitPatient({ name, paternalLastName, maternalLastName, age, birthdate, gender, CURP });
         setName('');
         setPaternalLastName('');
         setMaternalLastName('');
@@ -125,8 +107,6 @@ const handleDateChange = (date) => {
         setAge('');
         setGender('');
         setCurp('');
-        setEmail('');
-        setPassword('');
     };
 
     return (
@@ -169,7 +149,7 @@ const handleDateChange = (date) => {
                     />
                 </LocalizationProvider>
                 <div className="w-full flex flex-col gap-y-2">
-                <label>Edad</label>
+                <label>Edad Calculada</label>
                 <input
                     type="text"
                     value={age}
@@ -219,21 +199,6 @@ const handleDateChange = (date) => {
                             className="w-full bg-gray-100 py-2 pl-10 pr-4 rounded-lg outline-none" placeholder="Escribe tu apellido materno" />
                     </div>
                 </div>
-            <div className="w-full flex flex-col gap-y-2">
-                <label htmlFor="email" className="text-gray-700 font-bold mb-2 block">Correo electrónico</label>
-                <div className="relative">
-                    <RiMailLine className="text-gray-500 absolute top-1/2 -translate-y-1/2 left-4" />
-                    <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-gray-100 py-2 pl-10 pr-4 rounded-lg outline-none" placeholder="Escribe tu correo electrónico" />
-                </div>
-            </div>
-            <div className="w-full flex flex-col gap-y-2">
-                <label htmlFor="password" className="text-gray-700 font-bold mb-2 block">Contraseña</label>
-                <div className="relative">
-                    <RiLockPasswordLine className="text-gray-500 absolute top-1/2 -translate-y-1/2 left-4" />
-                    <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-gray-100 py-2 pl-10 pr-4 rounded-lg outline-none" placeholder="Escribe tu contraseña" />
-                </div>
-            </div>
             <div className="px-6 py-4 -10 flex justify-end space-x-2">
                 <button type="submit" className="bg-blue-600 text-white py-2 px-6 rounded-full hover:bg-blue-900 transition-colors">
                     Guardar

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const UserProfile = () => {
     return (
@@ -15,45 +15,38 @@ const UserProfile = () => {
                         </div>
                         <div className="md:col-span-2">
                             <h2 className="text-2xl font-semibold">Nombre de usuario</h2>
-                            <p className="mt-2 text-gray-600">Correo electrónico</p>
                             <div className="mt-8 space-y-4">
+                                {/* Aquí agregamos los nuevos campos */}
                                 <div>
-                                    <h3 className="font-semibold text-gray-700">Biografía</h3>
-                                    <p className="text-gray-600">Descripción breve del usuario</p>
+                                    <h3 className="font-semibold text-gray-700">Edad</h3>
+                                    <p className="text-gray-600">Edad del usuario</p>
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-gray-700">Ubicación</h3>
-                                    <p className="text-gray-600">Ciudad, País</p>
+                                    <h3 className="font-semibold text-gray-700">Fecha de Nacimiento</h3>
+                                    <p className="text-gray-600">DD/MM/AAAA</p>
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-gray-700">Intereses</h3>
-                                    <ul className="text-gray-600 list-disc ml-4">
-                                        <li>Interés 1</li>
-                                        <li>Interés 2</li>
-                                        <li>Interés 3</li>
-                                    </ul>
+                                    <h3 className="font-semibold text-gray-700">Género</h3>
+                                    <p className="text-gray-600">Género del usuario</p>
                                 </div>
+                                <div>
+                                    <h3 className="font-semibold text-gray-700">Estatus</h3>
+                                    <p className="text-gray-600">Estado actual del usuario</p>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-gray-700">CURP</h3>
+                                    <p className="text-gray-600">CURP del usuario</p>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-gray-700">ID del Dispositivo de Partículas</h3>
+                                    <p className="text-gray-600">Identificador del dispositivo</p>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-gray-700">Fecha de Registro</h3>
+                                    <p className="text-gray-600">Fecha de registro del usuario</p>
+                                </div>
+                                {/* Fin de los nuevos campos */}
                             </div>
-                        </div>
-                    </div>
-                    <div className="mt-8">
-                        <h3 className="text-xl font-semibold mb-4">Galería</h3>
-                        <div className="grid grid-cols-3 gap-4">
-                            <img
-                                className="w-full h-32 object-cover rounded"
-                                src="https://via.placeholder.com/150"
-                                alt="Gallery item"
-                            />
-                            <img
-                                className="w-full h-32 object-cover rounded"
-                                src="https://via.placeholder.com/150"
-                                alt="Gallery item"
-                            />
-                            <img
-                                className="w-full h-32 object-cover rounded"
-                                src="https://via.placeholder.com/150"
-                                alt="Gallery item"
-                            />
                         </div>
                     </div>
                 </div>
@@ -61,6 +54,5 @@ const UserProfile = () => {
         </div>
     );
 };
-
 
 export default UserProfile;

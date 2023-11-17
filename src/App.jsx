@@ -8,6 +8,7 @@ import CrearUsuario from './pages/NewUsers';
 import Alertas from './pages/HistoryAlerts';
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register';
+import Perfil_Usuario from '././pages/UserProfile';
 
 const App = () => {
   return (
@@ -27,6 +28,8 @@ const App = () => {
           {/* <Route path="/content" element={<AppContent />} /> */}
           {/* Ruta para la lista de pacientes */}
           <Route path="/Pacientes" element={<Pacientes />} />
+
+          <Route path="/Perfil_Usuario" element={<Perfil_Usuario/>} />
           {/* Ruta para la creación de usuarios */}
           <Route path='/CrearUsuario' element={<CrearUsuario />} />
           {/* Ruta para la página de historial de alertas */}

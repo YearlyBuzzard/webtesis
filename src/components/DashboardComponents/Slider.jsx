@@ -2,25 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaHome, FaUser, FaCalendar, FaPlus, FaBell, FaUserMd } from 'react-icons/fa';
 
-const Slider = ({ setActiveComponent }) => {
-  const [username, setUsername] = useState("");
-
-  const obtenerNombreUsuario = async () => {
-    try {
-      const response = await fetch('/api/getEmail');
-      if (response.ok) {
-        const data = await response.json();
-        setUsername(data.email);
-      } else {
-        console.error('Error al obtener el correo electrónico:', response.status);
-      }
-    } catch (error) {
-      console.error('Error al obtener el correo electrónico:', error);
-    }
-  };
-  useEffect(() => {
-    obtenerNombreUsuario();
-  }, []);
+const Slider = ({firstName, lastName}) => {
+  const initials = `${firstName ? firstName[0] : ''}${lastName ? lastName[0] : ''}`;
 
   return (
     <div className="h-screen flex items-center">
@@ -29,8 +12,8 @@ const Slider = ({ setActiveComponent }) => {
           <div className="logo flex items-center gap-4 mb-8">
             <img src="/logo-white.png" className="w-10 h-10 bg-indigo-600 p-2 rounded-xl" alt="Logo" />
             <div>
-              <h3 className="font-bold text-indigo-600">{username}</h3>
-              <p className="text-gray-800 text-xs">Desarrollo de aplicaciones</p>
+              <h3 className="font-bold text-indigo-600">Dashboard</h3>
+              <p className="text-gray-800 text-xs">Hospital</p>
             </div>
           </div>
           <ul className="mt-4 mb-8">
@@ -66,15 +49,15 @@ const Slider = ({ setActiveComponent }) => {
               </a>
             </li>
           </ul>
-          <div className="flex items-center gap-4 pt-4 border-t">
+          <div className="flex items-center gap-8 pt-4 border-t">
             <img src="https://img.freepik.com/fotos-premium/retrato-viejo-mexicano-sombrero_379858-2229.jpg" className="w-10 h-10 object-cover rounded-xl ring-4 ring-gray-200" alt="Perfil" />
             <div>
-              <h3 className="font-bold text-gray-900">Cesar Alejandro Sol</h3>
+            <h4 className="font-bold text-gray-900">{`${firstName} ${lastName}`}</h4>
               <p className="text-gray-800 text-xs">Desarrollador fullstack</p>
             </div>
           </div>
         </section>
-      </aside>
+      </aside> 
     </div>
   )
 }

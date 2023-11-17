@@ -48,7 +48,7 @@ const UserMenu = ({ userName = 'Alejandro Sol' }) => {
       {isOpen && (
         <ul className="absolute right-0 mt-2 w-48 py-2 bg-white rounded-md shadow-xl text-gray-700 z-50">
           <li>
-            <Link to="/" className="block px-4 py-2 hover:bg-gray-200">
+            <Link to="/Perfil_Usuario" className="block px-4 py-2 hover:bg-gray-200">
               Perfil
             </Link>
           </li>
