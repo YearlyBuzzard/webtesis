@@ -5,18 +5,15 @@ const UserProfile = () => {
         <div className="container mx-auto px-4 md:px-0">
             <div className="flex flex-col items-center justify-start">
                 <div className="w-full max-w-4xl">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-2">
-                        <div className="text-center md:text-left">
-                            <img
-                                className="md:full mx-auto rounded-full"
-                                src="https://via.placeholder.com/150"
-                                alt="User profile"
-                            />
-                        </div>
-                        <div className="md:col-span-2">
+                    <div className="grid grid-cols-2 md:grid-cols-2 item-center justify-center gap-2 md:gap-8 mt-2">
+                        {/* Datos del usuario */}
+                        <div className="md:col-span-3">
                             <h2 className="text-xl md:text-2xl font-semibold">Datos del Paciente</h2>
                             <div className="space-y-4 mt-4 md:mt-8">
-                                {/* Aquí agregamos los nuevos campos */}
+                            <div>
+                                    <h3 className="font-semibold text-gray-700">Nombre</h3>
+                                    <p className="text-gray-600">Nombre del paciente</p>
+                                </div>
                                 <div>
                                     <h3 className="font-semibold text-gray-700">Edad</h3>
                                     <p className="text-gray-600">Edad del usuario</p>
@@ -38,15 +35,19 @@ const UserProfile = () => {
                                     <p className="text-gray-600">CURP del usuario</p>
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-gray-700">ID del Dispositivo de Partículas</h3>
-                                    <p className="text-gray-600">Identificador del dispositivo</p>
-                                </div>
-                                <div>
                                     <h3 className="font-semibold text-gray-700">Fecha de Registro</h3>
                                     <p className="text-gray-600">Fecha de registro del usuario</p>
                                 </div>
-                                {/* Fin de los nuevos campos */}
                             </div>
+                        </div>
+
+                        {/* Imagen del usuario */}
+                        <div className="md:col-start-4 text-center md:text-right">
+                            <img
+                                className="md:full mx-auto rounded-full"
+                                src="https://via.placeholder.com/150"
+                                alt="User profile"
+                            />
                         </div>
                     </div>
                 </div>
