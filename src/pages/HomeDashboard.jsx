@@ -25,13 +25,13 @@ const HomeDashboard = () => {
           <DoctorWelcomeCard firstName={firstName} lastName={lastName} />
         </div>
         <div className="bg-white p-6 shadow-lg rounded-xl mt-4">
-          <PatientTable />
+          <PatientTable firstName={firstName} lastName={lastName}/>
         </div>
       </div>
 
       <div className="flex flex-col w-full lg:w-2/5 p-4 space-y-4 lg:mr-4">
         <div className="bg-white p-6 shadow-lg rounded-xl">
-          <AlertHistory />
+          <AlertHistory firstName={firstName} lastName={lastName}/>
         </div>
 
         <div className="bg-white p-6 shadow-lg rounded-xl">

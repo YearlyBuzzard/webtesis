@@ -2,20 +2,20 @@ import React from 'react';
 
 const UserProfile = () => {
     return (
-        <div className="container mx-auto">
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="bg-white shadow-md rounded-lg max-w-4xl mx-auto p-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="container mx-auto px-4 md:px-0">
+            <div className="flex flex-col items-center justify-start">
+                <div className="w-full max-w-4xl">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-2">
                         <div className="text-center md:text-left">
                             <img
-                                className="w-48 h-48 mx-auto md:mx-0 md:ml-0 rounded-full"
+                                className="md:full mx-auto rounded-full"
                                 src="https://via.placeholder.com/150"
                                 alt="User profile"
                             />
                         </div>
                         <div className="md:col-span-2">
-                            <h2 className="text-2xl font-semibold">Nombre de usuario</h2>
-                            <div className="mt-8 space-y-4">
+                            <h2 className="text-xl md:text-2xl font-semibold">Datos del Paciente</h2>
+                            <div className="space-y-4 mt-4 md:mt-8">
                                 {/* Aquí agregamos los nuevos campos */}
                                 <div>
                                     <h3 className="font-semibold text-gray-700">Edad</h3>

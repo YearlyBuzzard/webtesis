@@ -49,7 +49,7 @@ const Dashboard = () => {
             element={
               <div className="ml-80">
                 <div className="border border-gray-300 shadow-lg bg-white p-6 rounded-xl my-6 mx-6">
-                  <PatientForm onSubmit={handleAddPatient} />
+                  <PatientForm onSubmit={handleAddPatient}  patients={patients} firstName={firstName} lastName={lastName} />
                 </div>
               </div>
             }

@@ -23,6 +23,8 @@ const getStatusIcon = (status) => {
   }
 };
 
+
+
 const PatientList = () => {
   const [patients, setPatients] = useState([]);
   const [disabledPatients, setDisabledPatients] = useState([]);
@@ -35,6 +37,10 @@ const PatientList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [activeTab, setActiveTab] = useState('all'); // New state for active tab
+
+  const firstName = sessionStorage.getItem('userFirstName');
+  const lastName = sessionStorage.getItem('userLastName');
+  const fullName = `${firstName} ${lastName}`;
 
   const fetchPatients = async () => {
     try {
@@ -234,14 +240,14 @@ const PatientList = () => {
         </div>
       </CardHeader>
       <CardBody className="overflow-scroll px-0">
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between mb-4 ">
           <Button
             color={activeTab === 'all' ? 'blue' : 'gray'}
             onClick={() => setActiveTab('all')}
             size="sm"
             className={`w-1/3 ${activeTab === 'all' ? 'bg-blue-500' : 'bg-gray-200'}`}
           >
-            <InformationCircleIcon className="h-4 w-4 inline mr-1" />
+            <InformationCircleIcon className="h-4 w-4 inline mr-2" />
             Todos
           </Button>
           <Button
@@ -265,7 +271,7 @@ const PatientList = () => {
         </div>
         <table className="mt-4 w-full min-w-max table-auto text-left">
           <thead>
-            <tr>
+            <tr className='text-center'>
               {TABLE_HEAD.map((head) => (
                 <th key={head} className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                   <Typography
@@ -282,15 +288,17 @@ const PatientList = () => {
           <tbody>
             {filteredPatients.map((patient, index) => {
               const status = getStatusIcon(patient.status);
-              const classes = index === filteredPatients.length - 1 ? "p-4" : "p-4 border-b border-blue-gray-100";
+              const classes = index === filteredPatients.length - 0 ? "p-4" : "p-4 border-b border-gay-200 text-center " ;
               return (
                 <tr key={patient.id} className={classes}>
                   <td>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className='flex items-center justify-beetwen gap-3 w-36'>
                       <div className="rounded-full bg-blue-500 h-10 w-10 flex items-center justify-center">
                         <span className="font-medium text-sm text-white">{patient.name[0]}</span>
                       </div>
                       <span className="font-medium">{patient.name}</span>
+                      </div>
                     </div>
                   </td>
                   <td>{patient.age}</td>
@@ -311,7 +319,7 @@ const PatientList = () => {
                     </IconButton>
                   </td>
                   <td>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-row items-center justify-center gap-2">
                       <IconButton color="blue" size="small" onClick={() => openEditModal(patient)}>
                         <PencilIcon strokeWidth={2} className="h-4 w-4" />
                       </IconButton>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { MedicalCard, Nav, DistanceDisplay, HeartRate, OxygenLevel, PatientTemperature, PatientBloodPressure, Dashboard, CameraComponent, UserProfile } from ".";
+import {Nav, HeartRate, OxygenLevel, PatientTemperature, PatientBloodPressure, Dashboard, CameraComponent } from ".";
+import UserProfile from "../pages/UserProfile";
 
 let alertId = 0;
 
@@ -43,10 +44,11 @@ const AppContent = () => {
     }
   };
 
-  const commonComponentContainerStyle = "row-span-1 col-span-1 h-[320px] bg-white p-6 shadow-lg rounded-xl flex justify-center items-center";
+  const commonComponentContainerStyle = "row-span-1 col-span-1 h-full bg-white p-6 shadow-lg rounded-xl flex justify-center items-center overflow-hidden";
+  const ComponentContainerStyle = "row-span-2 col-span-1 h-full bg-white p-6 shadow-lg rounded-xl flex flex-col justify-start items-center overflow-hidden";
 
   return (
-    <div className="bg-gradient-to-b from-blue-200 h-screen">
+    <div className="bg-gradient-to-b from-blue-200 h-full">
       {!isDashboard && <Nav />}
       <Routes>
         <Route path="/" element={
@@ -57,8 +59,8 @@ const AppContent = () => {
             <div className={commonComponentContainerStyle}>
               <OxygenLevel level={98} />
             </div>
-            <div className={commonComponentContainerStyle}>
-              {/* Comment or uncomment the next line depending on whether you want to include the CameraComponent */}
+            <div className={ComponentContainerStyle}>
+              <UserProfile/>
               {/* <CameraComponent /> */}
             </div>
             <div className={commonComponentContainerStyle}>
@@ -67,6 +69,7 @@ const AppContent = () => {
             <div className={commonComponentContainerStyle}>
               <PatientTemperature initialTemperature={37.0} />
             </div>
+            {/* Más componentes si los necesitas */}
           </div>
         } />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -77,3 +80,4 @@ const AppContent = () => {
 };
 
 export default AppContent;
+
