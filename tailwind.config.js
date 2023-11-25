@@ -6,6 +6,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        spin: 'spin 1s linear infinite',
+      },
       colors: {
         purple: {
           '100': '#EDE9FE',

@@ -66,7 +66,7 @@ const HeartRate = ({ initialBpm = 75 }) => {
     <div className="flex flex-col w-full h-full">
       <div className="bg-white p-5 rounded-xl w-full" onClick={handleShow}>
         <div className="text-center flex flex-col items-center w-full">
-          <h1 className="text-2xl font-bold text-blue-800 mb-4 w-full">Ritmo Cardíaco <GiHeartBeats className="inline-block ml-2" /></h1>
+          <h1 className="text-2xl font-bold text-blue-800 mb-4 w-full ">Ritmo Cardíaco <GiHeartBeats className="inline-block ml-2" /></h1>
           <div className={`text-6xl font-semibold ${color} mb-4`}>{bpm} BPM</div>
           <ResponsiveContainer width="100%" height={100}>
             <AreaChart data={chartData} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>

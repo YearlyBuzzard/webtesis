@@ -25,10 +25,11 @@ import Register from '../pages/auth/Register';
 import CameraComponent from './CameraComponent';
 import NotificationCenter from "./NotificationCenter/NotificationCenter";
 import UserProfile from "../pages/UserProfile";
+import Spinner from "../assets/Spinner";
 
 
 export{
     Nav, PersonalCard, MedicalCard, DistanceDisplay, HeartRate, OxygenLevel ,PatientBloodPressure, PatientTemperature, WeatherComponent, Slider, 
     Dashboard, PatientTable,DoctorWelcomeCard, Note, AlertHistory, PatientList, HomeDashboard, PatientForm, NewUsers, HistoryAlerts,
-    ListAlertsHistory, Login, Register, CameraComponent, NotificationCenter, UserProfile
+    ListAlertsHistory, Login, Register, CameraComponent, NotificationCenter, UserProfile, Spinner
 }

@@ -6,24 +6,11 @@ import { Chip, Card, CardHeader, Typography, Button, CardBody, IconButton, Toolt
 import ConfirmDeleteModal from '../modal/ConfirmDeleteModal';
 import AddPatientModal from '../modal/AddPatientModal';
 import EditPatientModal from '../modal/EditPatientModal';
+import { MdAddCircle } from 'react-icons/md'; // Asumiendo que usas React Icons
 import { FiPlus } from 'react-icons/fi';
 
-const TABLE_HEAD = ["Member", "Age", "Gender", "Status", "Condition", "Details", "Actions"];
 
-const getStatusIcon = (status) => {
-  switch (status) {
-    case 'Stable':
-      return { value: "Stable", color: "green" };
-    case 'Serious':
-      return { value: "Serious", color: "yellow" };
-    case 'Critical':
-      return { value: "Critical", color: "red" };
-    default:
-      return { value: "Unknown", color: "gray" };
-  }
-};
-
-
+const TABLE_HEAD = ["Pacientes", "Edad", "Genero", "Estado", "Signos Vitales", "Acciones"];
 
 const PatientList = () => {
   const [patients, setPatients] = useState([]);
@@ -38,9 +25,12 @@ const PatientList = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [activeTab, setActiveTab] = useState('all'); // New state for active tab
 
+
+  //Datos del login paa el nombre de usuario
   const firstName = sessionStorage.getItem('userFirstName');
   const lastName = sessionStorage.getItem('userLastName');
   const fullName = `${firstName} ${lastName}`;
+
 
   const fetchPatients = async () => {
     try {
@@ -82,6 +72,7 @@ const PatientList = () => {
     setPatientToDelete(patientId);
     setOpenDeleteModal(true);
   };
+
 
   const deletePatient = async () => {
     if (patientToDelete) {
@@ -204,9 +195,13 @@ const PatientList = () => {
     }
   };
 
-  // Filter patients based on active tab
-  const filteredPatients = activeTab === 'all' ? patients : (activeTab === 'enabled' ? enabledPatients : disabledPatients);
+  // Filtered patients based on search term
+  const filteredPatients = patients.filter(patient =>
+    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
 
+  );
+
+  // Filter patients based on active tab
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -227,48 +222,47 @@ const PatientList = () => {
                 color="lightBlue"
                 size="regular"
                 outline={true}
-                placeholder="Search patients"
+                placeholder="Buscar"
                 value={searchTerm}
                 onChange={handleSearch}
               />
             </div>
-            <Button color="blue" size="sm" onClick={openAddModal}>
-              <FiPlus className="inline mr-2" />
-              Add Patient
+
+            <Button className="w-22 px-4 py-4" color="blue" onClick={openAddModal}>
+              <MdAddCircle className="text-lg" />
             </Button>
+
           </div>
         </div>
       </CardHeader>
       <CardBody className="overflow-scroll px-0">
-        <div className="flex justify-between mb-4 ">
+        <div className="flex justify-between mb-4 space-x-2">
           <Button
-            color={activeTab === 'all' ? 'blue' : 'gray'}
             onClick={() => setActiveTab('all')}
             size="sm"
-            className={`w-1/3 ${activeTab === 'all' ? 'bg-blue-500' : 'bg-gray-200'}`}
+            className={`w-1/3 transition duration-300 ease-in-out ${activeTab === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'} hover:bg-blue-600`}
           >
-            <InformationCircleIcon className="h-4 w-4 inline mr-2" />
+            <InformationCircleIcon className="h-5 w-5 inline mr-2 align-middle" />
             Todos
           </Button>
           <Button
-            color={activeTab === 'enabled' ? 'blue' : 'gray'}
             onClick={() => setActiveTab('enabled')}
             size="sm"
-            className={`w-1/3 ${activeTab === 'enabled' ? 'bg-blue-500' : 'bg-gray-200'}`}
+            className={`w-1/3 transition duration-300 ease-in-out ${activeTab === 'enabled' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'} hover:bg-blue-600`}
           >
-            <EyeIcon className="h-4 w-4 inline mr-1" />
+            <EyeIcon className="h-5 w-5 inline mr-1 align-middle" />
             Habilitados
           </Button>
           <Button
-            color={activeTab === 'disabled' ? 'blue' : 'gray'}
             onClick={() => setActiveTab('disabled')}
             size="sm"
-            className={`w-1/3 ${activeTab === 'disabled' ? 'bg-blue-500' : 'bg-gray-200'}`}
+            className={`w-1/3 transition duration-300 ease-in-out ${activeTab === 'disabled' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'} hover:bg-blue-600`}
           >
-            <TrashIcon className="h-4 w-4 inline mr-1" />
+            <TrashIcon className="h-5 w-5 inline mr-1 align-middle" />
             Deshabilitados
           </Button>
         </div>
+
         <table className="mt-4 w-full min-w-max table-auto text-left">
           <thead>
             <tr className='text-center'>
@@ -287,27 +281,22 @@ const PatientList = () => {
           </thead>
           <tbody>
             {filteredPatients.map((patient, index) => {
-              const status = getStatusIcon(patient.status);
-              const classes = index === filteredPatients.length - 0 ? "p-4" : "p-4 border-b border-gay-200 text-center " ;
+              const fullNamePatient = `${patient.name} ${patient.paternalLastName} ${patient.maternalLastName || ''}`.trim();
+              const classes = index === filteredPatients.length - 0 ? "p-4" : "p-4 border-b border-gay-200 text-center ";
               return (
                 <tr key={patient.id} className={classes}>
                   <td>
-                    <div className="flex items-center justify-center gap-2">
-                      <div className='flex items-center justify-beetwen gap-3 w-36'>
-                      <div className="rounded-full bg-blue-500 h-10 w-10 flex items-center justify-center">
-                        <span className="font-medium text-sm text-white">{patient.name[0]}</span>
-                      </div>
-                      <span className="font-medium">{patient.name}</span>
+                    <div className="flex items-center justify-center gap-2 w-full">
+                      <div className="flex items-center gap-3 w-full">
+                        <div className="rounded-full bg-blue-500 h-10 w-10 flex items-center justify-center">
+                          <span className="font-medium text-sm text-white">{patient.name[0]}</span>
+                        </div>
+                        <span className="font-medium truncate">{fullNamePatient}</span>
                       </div>
                     </div>
                   </td>
                   <td>{patient.age}</td>
                   <td>{patient.gender}</td>
-                  <td>
-                    <Chip color={status.color} variant="solid" size="sm">
-                      {status.value}
-                    </Chip>
-                  </td>
                   <td>{patient.condition}</td>
                   <td>
                     <IconButton className="p-1" color="lightBlue">

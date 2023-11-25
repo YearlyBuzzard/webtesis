@@ -43,10 +43,10 @@ function Login() {
     return (
         <div className="bg-gradient-to-b from-blue-300 to-white min-h-screen flex items-center justify-center p-4">
             <div className="max-w-lg w-full">
+                <div className="bg-white w-full rounded-lg p-8 items-center ">
                 <div className="flex justify-center mb-8">
                     <FaMedkit className="text-6xl text-blue-500" />
                 </div>
-                <div className="bg-white w-full rounded-lg p-8 mb-8">
                     <div className="flex flex-col items-center gap-1 mb-8">
                         <h1 className="text-3xl text-gray-900 font-semibold">Bienvenido</h1>
                         <p className="text-gray-400 text-lg">Ingresa con tu correo electrónico y tu contraseña</p>

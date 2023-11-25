@@ -1,12 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Avatar from '@mui/material/Avatar';
 import { Link } from 'react-router-dom';
 import { MdRemoveRedEye } from 'react-icons/md';
 
@@ -31,64 +23,63 @@ function PatientTable() {
     }
   }
 
-  // Función para obtener un color aleatorio
   function getRandomColor() {
-    const colors = ['bg-red-500', 'bg-green-500', 'bg-blue-500', 'bg-yellow-500', 'bg-purple-500'];
-    return colors[Math.floor(Math.random() * colors.length)];
+    const colorClasses = [
+      'bg-red-300', 'bg-green-300', 'bg-blue-300', 
+      'bg-yellow-300', 'bg-purple-300', 'bg-pink-300', 'bg-indigo-300'
+    ];
+    return colorClasses[Math.floor(Math.random() * colorClasses.length)];
   }
 
-  // Función para obtener las iniciales del nombre
   function getInitials(name) {
     return name.split(' ').map(n => n[0]).join('');
   }
 
   return (
-    <div className="bg-white p-4 sm:p-6 mx-auto max-w-4xl rounded-xl shadow-lg w-full">
-      <h2 className="text-2xl font-bold mb-4 tracking-wide">Pacientes</h2>
-      <TableContainer component={Paper} className="rounded-xl overflow-hidden">
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center" className="px-4 py-2 text-gray-700 font-semibold">Imagen</TableCell>
-              <TableCell align="center" className="px-4 py-2 text-gray-700 font-semibold">Nombre</TableCell>
-              <TableCell align="center" className="px-4 py-2 text-gray-700 font-semibold">Edad</TableCell>
-              <TableCell align="center" className="px-4 py-2 text-gray-700 font-semibold">Género</TableCell>
-              <TableCell align="center" className="px-4 py-2 text-gray-700 font-semibold">Estado</TableCell>
-              <TableCell align="center" className="px-4 py-2 text-gray-700 font-semibold">Ver Paciente</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {patients.slice(0, maxPatientsToShow).map((patient) => (
-              <TableRow key={patient.id}>
-                <TableCell align="center">
-                  {patient.imageUrl ? (
-                    <Avatar alt={patient.name} src={patient.imageUrl} />
-                  ) : (
-                    <Avatar className={`${patient.bgColor} text-white`}>
-                      {getInitials(patient.name)}
-                    </Avatar>
-                  )}
-                </TableCell>
-                <TableCell align="center">{`${patient.name} ${patient.paternalLastName} ${patient.maternalLastName}`}</TableCell>
-                <TableCell align="center">{patient.age}</TableCell>
-                <TableCell align="center">{patient.gender}</TableCell>
-                <TableCell align="center">
-                  <span className={`px-2 py-1 rounded-full text-sm font-bold shadow-sm ${patient.status === 'Stable' ? 'text-green-600 bg-green-100' : patient.status === 'Serious' ? 'text-yellow-600 bg-yellow-100' : 'text-red-600 bg-red-100'}`}>
-                    {patient.status}
-                  </span>
-                </TableCell>
-                <TableCell align="center">
-                  <Link to={`/content/${patient.id}`} className="bg-slate-100 inline-flex justify-center items-center rounded-full p-2 shadow focus:outline-none focus:ring-2 focus:ring-blue-300 transition ease-in-out duration-150">
-                    <MdRemoveRedEye className="text-blue-500 text-lg center" />
-                  </Link>
-                </TableCell>
-              </TableRow>
+    <div className="bg-gray-100 p-2 sm:p-3 md:p-4 mx-auto max-w-full rounded-lg shadow-lg">
+      <h2 className="text-md sm:text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-800">Pacientes</h2>
+      <div className="overflow-x-auto shadow-md">
+        <table className="min-w-full text-center bg-white rounded-lg">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="py-1 md:py-2 px-2 md:px-3 text-sm md:text-base">Imagen</th>
+              <th className="py-1 md:py-2 px-2 md:px-3 text-sm md:text-base">Nombre</th>
+              <th className="py-1 md:py-2 px-2 md:px-3 text-sm md:text-base">Edad</th>
+              <th className="py-1 md:py-2 px-2 md:px-3 text-sm md:text-base">Género</th>
+              <th className="py-1 md:py-2 px-2 md:px-3 text-sm md:text-base">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {patients.slice(0, maxPatientsToShow).map((patient, index) => (
+               <tr key={index} className="border-b">
+               <td className="py-4 px-6">
+                 <div className={`flex justify-center items-center rounded-full p-2 text-white text-lg ${patient.bgColor}`}>
+                   {getInitials(patient.name)}
+                 </div>
+               </td>
+               <td className="py-4 px-6">
+                 <span className="text-gray-700 font-medium">
+                   {`${patient.name} ${patient.paternalLastName} ${patient.maternalLastName}`}
+                 </span>
+               </td>
+               <td className="py-4 px-6">
+                 <span className="text-gray-700">{patient.age}</span>
+               </td>
+               <td className="py-4 px-6">
+                 <span className="text-gray-700">{patient.gender}</span>
+               </td>
+               <td className="py-4 px-6">
+                 <Link to={`/content/${patient.id}`} className="inline-flex justify-center items-center bg-blue-500 hover:bg-blue-600 rounded-full p-2 shadow-lg">
+                   <MdRemoveRedEye className="text-white text-lg" />
+                 </Link>
+               </td>
+             </tr>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div className="mt-4 text-right">
-        <Link to="/Pacientes" className="border border-blue-500 text-blue-500 py-2 px-4 hover:bg-blue-500 hover:text-white rounded-xl transition-colors duration-200 ml-auto shadow focus:outline-none focus:ring-2 focus:ring-blue-300">
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-3 md:mt-4 text-right">
+        <Link to="/Pacientes" className="inline-block text-sm md:text-base text-blue-500 border border-blue-500 py-1 md:py-2 px-3 md:px-4 rounded-full hover:bg-blue-500 hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
           Ver todos los pacientes
         </Link>
       </div>
@@ -97,5 +88,3 @@ function PatientTable() {
 }
 
 export default PatientTable;
-
-

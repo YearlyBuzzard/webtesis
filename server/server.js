@@ -3,6 +3,7 @@ const cors = require('cors');
 const mqtt = require('mqtt');
 const connection = require('./db');
 const crypto = require('crypto');
+const { spawn } = require('child_process');  // Añadir esto para ffmpeg
 
 const app = express();
 app.use(cors());
@@ -26,6 +27,39 @@ mqttClient.on('message', (topic, message) => {
   }
 });
 
+// Configuración del servidor de streaming para la cámara USB
+app.get('/camera-stream', (req, res) => {
+  res.connection.setTimeout(0);
+
+  // Asegúrate de cambiar 'video=TuCamaraUSB' por el nombre correcto de tu cámara
+  const ffmpegPath = 'C:\\webcam\\bin\\ffmpeg.exe'; // Ajusta esto a la ruta correcta de ffmpeg
+  const ffmpeg = spawn(ffmpegPath, [
+    '-rtbufsize', '100M', // Aumenta el tamaño del buffer
+    '-f', 'dshow',
+    '-i', 'video=Camo',
+    // Especifica aquí más parámetros de ffmpeg según sea necesario
+    '-f', 'mpegts',
+    '-codec:v', 'mpeg1video',
+    '-b:v', '500k', // Reduce la tasa de bits
+    '-s', '640x480', // Reduce la resolución
+    '-r', '30',
+    '-'
+  ]);
+
+  ffmpeg.stdout.on('data', (data) => {
+    res.write(data);
+  });
+
+  ffmpeg.stderr.on('data', (data) => {
+    console.error('ffmpeg stderr:', data.toString());
+  });
+
+  req.on('close', () => {
+    ffmpeg.kill('SIGINT');
+  });
+});
+
+
 app.get('/api/temperature', (req, res) => {
   res.json({ temperature: lastTemperature });
 });
@@ -40,7 +74,7 @@ app.post('/api/doctors', (req, res) => {
     (error, results) => {
       if (error) {
         return res.status(500).json({ error });
-      } 
+      }
       res.status(201).json({ id: results.insertId });
     }
   );
@@ -63,23 +97,46 @@ app.post('/api/patients', (req, res) => {
   );
 });
 
-//User deshabilitado 
-app.patch('/api/patients/:id', (req, res) => {
+// Obtener los detalles de un paciente específico por ID
+app.get('/api/patients/:id', (req, res) => {
   const { id } = req.params;
-  const { disabled } = req.body;
 
-  connection.query(
-    'UPDATE patients SET disabled = ? WHERE id = ?',
-    [disabled, id],
-    (error, results) => {
-      if (error) {
-        res.status(500).json({ message: 'Error interno del servidor' });
+  connection.query('SELECT * FROM patients WHERE id = ?', [id], (error, results) => {
+    if (error) {
+      res.status(500).json({ message: 'Error interno del servidor', error });
+    } else {
+      if (results.length === 0) {
+        res.status(404).json({ message: 'Paciente no encontrado' });
       } else {
-        res.status(200).json({ message: 'Paciente actualizado exitosamente' });
+        res.status(200).json(results[0]);
       }
     }
-  );
+  });
 });
+
+
+// Obtener pacientes habilitados
+app.get('/api/patients/enabled', (req, res) => {
+  connection.query('SELECT * FROM patients WHERE enabled = true', (error, results) => {
+    if (error) {
+      res.status(500).json({ message: 'Error interno del servidor', error });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
+// Obtener pacientes deshabilitados
+app.get('/api/patients/disabled', (req, res) => {
+  connection.query('SELECT * FROM patients WHERE enabled = false', (error, results) => {
+    if (error) {
+      res.status(500).json({ message: 'Error interno del servidor', error });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
 
 //Codigo y conexion para inciar sesion
 app.post('/api/login', (req, res) => {
@@ -104,36 +161,14 @@ app.post('/api/login', (req, res) => {
             res.status(401).json({ message: 'Contraseña incorrecta' });
           } else {
             // Envía el nombre y apellido como parte de la respuesta
-            res.status(200).json({ 
-              message: 'Inicio de sesión exitoso', 
+            res.status(200).json({
+              message: 'Inicio de sesión exitoso',
               admin: {
                 nombre: admin.nombre,  // Asegúrate de que 'admin.nombre' tenga el valor correcto
                 apellido: admin.apellido  // Asegúrate de que 'admin.apellido' tenga el valor correcto
               }
             });
           }
-        }
-      }
-    }
-  );
-});
-
-app.get('/api/getEmail', (req, res) => {
-  const userId = req.userId;
-
-  connection.query(
-    'SELECT email FROM patients WHERE id = ?',
-    [userId],
-    (error, results) => {
-      if (error) {
-        console.error('Error al obtener el correo electrónico:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-      } else {
-        if (results.length === 0) {
-          res.status(404).json({ message: 'Usuario no encontrado' });
-        } else {
-          const email = results[0].email;
-          res.json({ email });
         }
       }
     }
