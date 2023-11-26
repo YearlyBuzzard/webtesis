@@ -1,22 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { GiHeartBeats } from 'react-icons/gi';
-import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Label } from 'recharts';
+import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const HeartRate = ({ initialBpm = 75 }) => {
   const [bpm, setBpm] = useState(initialBpm);
-  const bpmRef = useRef(bpm);
-  const [heartRateStatus, setHeartRateStatus] = useState('Normal'); // Estado para rastrear el estado del ritmo cardíaco
+  const [heartRateStatus, setHeartRateStatus] = useState('Normal');
   const [chartData, setChartData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const bpmRef = useRef(bpm);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newBpm = Math.floor(Math.random() * (100 - 60 + 1)) + 60;
-      setBpm(newBpm);
-    }, 5000);
+    const fetchHeartRate = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/heartRate');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setBpm(data.heartRate);
+      } catch (error) {
+        console.error('Error al obtener el ritmo cardíaco:', error);
+        toast.error('Error al cargar datos del ritmo cardíaco');
+      }
+    };
 
-    return () => clearInterval(interval);
+    const intervalId = setInterval(fetchHeartRate, 2000);
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
@@ -26,14 +36,15 @@ const HeartRate = ({ initialBpm = 75 }) => {
     } else if (bpm <= 70 || bpm >= 90) {
       statusMessage = `Precaución: ${bpm} BPM`;
     }
+
     setHeartRateStatus(statusMessage);
-  
-    setChartData(prevData => [...prevData.slice(-11), { 
-      time: new Date().toLocaleTimeString(), 
-      value: bpm, 
-      status: statusMessage 
+
+    setChartData(prevData => [...prevData.slice(-11), {
+      time: new Date().toLocaleTimeString(),
+      value: bpm,
+      status: statusMessage
     }]);
-  
+
     if (statusMessage.startsWith('Peligro') && bpmRef.current !== 'Peligro') {
       toast.error(`Peligro: El ritmo cardíaco del paciente es ${bpm} BPM, anormalmente alto o bajo.`);
       bpmRef.current = 'Peligro';
@@ -41,7 +52,7 @@ const HeartRate = ({ initialBpm = 75 }) => {
       toast.success(`Normal: El ritmo cardíaco del paciente es ${bpm} BPM.`);
       bpmRef.current = 'Normal';
     }
-  }, [bpm]);  
+  }, [bpm]);
 
   let color = '';
   let colorValue = '';
@@ -88,24 +99,24 @@ const HeartRate = ({ initialBpm = 75 }) => {
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">Ritmo Cardíaco</h3>
+                    <div className="w-full h-[500px] mt-4">
+                      <ResponsiveContainer>
+                        <AreaChart data={chartData}>
+                          <XAxis dataKey="time">
+                          </XAxis>
+                          <YAxis label={{ value: 'BPM', angle: -90, position: 'insideLeft' }} />
+                          <Tooltip formatter={(value, name, props) => [props.payload.status, 'Estado']} />
+                          <Area type="monotone" dataKey="value" fill={colorValue} stroke={colorValue} />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
-                <div className="w-full h-[500px] mt-4">
-                  <ResponsiveContainer>
-                    <AreaChart data={chartData}>
-                      <XAxis dataKey="time">
-                      </XAxis>
-                      <YAxis label={{ value: 'BPM', angle: -90, position: 'insideLeft' }} />
-                      <Tooltip formatter={(value, name, props) => [props.payload.status, 'Estado']} />
-                      <Area type="monotone" dataKey="value" fill={colorValue} stroke={colorValue} />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  <button type="button" className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onClick={handleClose}>
+                    Cerrar
+                  </button>
                 </div>
-              </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button type="button" className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onClick={handleClose}>
-                  Cerrar
-                </button>
               </div>
             </div>
           </div>

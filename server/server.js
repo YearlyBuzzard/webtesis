@@ -11,58 +11,114 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configuración del cliente MQTT
-
-const mqttClient = mqtt.connect('mqtt://test.mosquitto.org'); // Reemplaza con la URL de tu broker MQTT
+const mqttClient = mqtt.connect('mqtt://test.mosquitto.org');
 let lastTemperature = 0;
+let lastHeartRate = 75;
+let lastSystolic = 120;
+let lastDiastolic = 80;
+let lastOxygenLevel = 95;  // Valor inicial para el nivel de oxígeno
+
 
 mqttClient.on('connect', () => {
   console.log('Conectado a MQTT Broker');
-  mqttClient.subscribe('temperatura/photon'); // Suscribirse al tópico de temperatura
+  mqttClient.subscribe('temperatura/photon');
+  mqttClient.subscribe('ritmoCardiaco/photon');
+  mqttClient.subscribe('presionArterial/photon');
+  mqttClient.subscribe('nivelOxigeno/photon'); // Suscripción al tópico del nivel de oxígeno
+
+  
 });
 
 mqttClient.on('message', (topic, message) => {
   if (topic === 'temperatura/photon') {
     lastTemperature = parseFloat(message.toString());
-    console.log(`Temperatura recibida: ${lastTemperature}`); // Verifica si se imprime esto
+    console.log(`Temperatura recibida: ${lastTemperature}`);
+  } else if (topic === 'ritmoCardiaco/photon') {
+    lastHeartRate = parseInt(message.toString(), 10);
+    console.log(`Ritmo cardíaco recibido: ${lastHeartRate}`);
+  } else if (topic === 'presionArterial/photon') {
+    const bloodPressure = JSON.parse(message.toString());
+    lastSystolic = bloodPressure.systolic;
+    lastDiastolic = bloodPressure.diastolic;
+    console.log(`Presión arterial recibida: ${lastSystolic}/${lastDiastolic}`);
+  }else   if (topic === 'nivelOxigeno/photon') {
+    lastOxygenLevel = parseFloat(message.toString());
+    console.log(`Nivel de oxígeno recibido: ${lastOxygenLevel}`);
   }
+
 });
 
-// Configuración del servidor de streaming para la cámara USB
-app.get('/camera-stream', (req, res) => {
-  res.connection.setTimeout(0);
-
-  // Asegúrate de cambiar 'video=TuCamaraUSB' por el nombre correcto de tu cámara
-  const ffmpegPath = 'C:\\webcam\\bin\\ffmpeg.exe'; // Ajusta esto a la ruta correcta de ffmpeg
-  const ffmpeg = spawn(ffmpegPath, [
-    '-rtbufsize', '100M', // Aumenta el tamaño del buffer
-    '-f', 'dshow',
-    '-i', 'video=Camo',
-    // Especifica aquí más parámetros de ffmpeg según sea necesario
-    '-f', 'mpegts',
-    '-codec:v', 'mpeg1video',
-    '-b:v', '500k', // Reduce la tasa de bits
-    '-s', '640x480', // Reduce la resolución
-    '-r', '30',
-    '-'
-  ]);
-
-  ffmpeg.stdout.on('data', (data) => {
-    res.write(data);
-  });
-
-  ffmpeg.stderr.on('data', (data) => {
-    console.error('ffmpeg stderr:', data.toString());
-  });
-
-  req.on('close', () => {
-    ffmpeg.kill('SIGINT');
-  });
-});
-
-
+// Rutas API
 app.get('/api/temperature', (req, res) => {
   res.json({ temperature: lastTemperature });
 });
+
+app.get('/api/heartRate', (req, res) => {
+  res.json({ heartRate: lastHeartRate });
+});
+
+app.get('/api/bloodPressure', (req, res) => {
+  res.json({ systolic: lastSystolic, diastolic: lastDiastolic });
+});
+
+// Ruta para obtener el último nivel de oxígeno
+app.get('/api/oxygenLevel', (req, res) => {
+  res.json({ oxygenLevel: lastOxygenLevel });
+});
+
+// // Configuración del servidor de streaming para la cámara USB
+// app.get('/camera-stream', (req, res) => {
+//   res.connection.setTimeout(0);
+//   const ffmpegPath = 'C:\\webcam\\bin\\ffmpeg.exe'; // Ajusta esto a la ruta correcta de ffmpeg
+// const ffmpeg = spawn(ffmpegPath, [
+//     '-f', 'dshow',
+//     '-i', 'video=Camo', // Asegúrate de que este es el nombre correcto de tu cámara
+//     '-c:v', 'copy', // Sin transcodificación
+//     '-f', 'mjpeg', // Formato MJPEG para transmisión en tiempo real
+//     '-'
+//   ]);
+
+//   res.writeHead(200, {
+//     'Content-Type': 'multipart/x-mixed-replace; boundary=ffmpeg'
+//   });
+
+//   ffmpeg.stdout.on('data', (data) => {
+//     res.write(`--ffmpeg\r\nContent-Type: image/jpeg\r\n\r\n`);
+//     res.write(data);
+//     res.write('\r\n');
+//   });
+
+//   ffmpeg.stderr.on('data', (data) => {
+//     console.error('ffmpeg stderr:', data.toString());
+//   });
+
+//   req.on('close', () => {
+//     ffmpeg.kill('SIGINT');
+//   });
+// });
+
+
+
+// Ruta para guardar los datos de temperatura del paciente
+
+app.post('/api/vital_signs', (req, res) => {
+  const { patient_id, temperatura } = req.body;
+
+  if (!patient_id || temperatura === undefined) {
+    return res.status(400).json({ message: 'Datos incompletos: se requieren patient_id y temperatura.' });
+  }
+
+  const query = 'INSERT INTO vital_signs (patient_id, temperatura, fecha_hora) VALUES (?, ?, CURRENT_TIMESTAMP)';
+  
+  connection.query(query, [patient_id, temperatura], (error, results) => {
+    if (error) {
+      console.error('Error al insertar en la base de datos:', error);
+      return res.status(500).json({ message: 'Error al guardar los datos de temperatura' });
+    }
+    res.status(201).json({ message: 'Datos de temperatura guardados con éxito', id: results.insertId });
+  });
+});
+
 
 // código para registrar doctores
 app.post('/api/doctors', (req, res) => {

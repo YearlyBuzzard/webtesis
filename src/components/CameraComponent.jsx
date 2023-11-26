@@ -6,7 +6,7 @@ const CameraFeed = () => {
   return (
     <div>
       <h2>Camera Feed</h2>
-      <video src={streamUrl} controls autoPlay></video>
+      <video src={streamUrl} controls autoPlay muted playsInline></video>
     </div>
   );
 };

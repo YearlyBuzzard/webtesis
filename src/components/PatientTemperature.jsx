@@ -3,12 +3,11 @@ import { toast } from 'react-toastify';
 import { FaThermometerHalf } from 'react-icons/fa';
 import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Label } from 'recharts';
 
-const PatientTemperature = ({ initialTemperature = 36.5 }) => {
+const PatientTemperature = ({ initialTemperature = 36.5, patientId }) => {
   const [temperature, setTemperature] = useState(initialTemperature);
-  const [temperatureRange, setTemperatureRange] = useState('Normal');
   const [chartData, setChartData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const lastNotification = useRef(null); // Ref para rastrear la última notificación
+  const lastNotification = useRef(null);
 
   useEffect(() => {
     const fetchTemperature = async () => {
@@ -21,6 +20,7 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
         setTemperature(data.temperature);
       } catch (error) {
         console.error('Error al obtener la temperatura:', error);
+        toast.error('Error al cargar datos de temperatura');
       }
     };
 
@@ -36,12 +36,10 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
       statusMessage = `Precaución: ${temperature.toFixed(1)} °C`;
     }
 
-    setTemperatureRange(statusMessage);
-
-    setChartData(prevData => [...prevData.slice(-11), { 
-      time: new Date().toLocaleTimeString(), 
-      value: temperature, 
-      range: statusMessage 
+    setChartData(prevData => [...prevData.slice(-11), {
+      time: new Date().toLocaleTimeString(),
+      value: temperature,
+      range: statusMessage
     }]);
 
     if (statusMessage.startsWith('Peligro') && lastNotification.current !== 'Peligro') {
@@ -51,27 +49,52 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
       toast.success(`Normal: La temperatura del paciente es ${temperature.toFixed(1)} °C.`);
       lastNotification.current = 'Normal';
     }
-  }, [temperature]);
+
+    // Guardar datos en la base de datos
+    saveTemperatureData({ patient_id: patientId, temperatura: temperature });
+  }, [temperature, patientId]);
+
+  // Función para guardar datos de temperatura
+  const saveTemperatureData = async (data) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/vital_signs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Network response was not ok');
+      }
+      console.log('Datos de temperatura guardados con éxito');
+    } catch (error) {
+      console.error('Error al guardar la temperatura:', error);
+      toast.error('Error al guardar datos de temperatura: ' + error.message);
+    }
+  };
 
   let color = '';
   let colorValue = '';
   if (temperature < 35.0 || temperature > 38.9) {
     color = 'text-red-500';
     colorValue = '#EF4444';
-  } else if (temperature <= 36.0 || temperature >= 37.3) {
-    color = 'text-yellow-500';
-    colorValue = '#FBBF24';
-  } else {
+  } else if (temperature >= 36.0 && temperature <= 37.3) {
     color = 'text-green-500';
     colorValue = '#10B981';
+  } else {
+    color = 'text-yellow-500';
+    colorValue = '#FBBF24';
   }
 
-  const handleClose = () => setIsModalOpen(false);
-  const handleShow = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+  const handleOpenModal = () => setIsModalOpen(true);
 
   return (
     <div className="flex flex-col w-full">
-      <div className="bg-white p-5 rounded-xl w-full" onClick={handleShow}>
+      <div className="bg-white p-5 rounded-xl w-full" onClick={handleOpenModal}>
         <div className="text-center flex flex-col items-center w-full">
           <h1 className="text-2xl font-bold text-blue-800 mb-4">
             Temperatura del Paciente <FaThermometerHalf className="inline-block ml-2" />
@@ -90,7 +113,7 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
         </div>
       </div>
       {isModalOpen && (
-        <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" onClick={handleClose}>
+        <div className="fixed inset-0 z-10 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" onClick={handleCloseModal}>
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
             <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
@@ -99,9 +122,7 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">Temperatura del Paciente</h3>
-                  </div>
-                </div>
-                <div className="w-full h-[500px] mt-4">
+                    <div className="w-full h-[500px] mt-4">
                   <ResponsiveContainer>
                     <AreaChart data={chartData}>
                       <XAxis dataKey="time" />
@@ -113,9 +134,11 @@ const PatientTemperature = ({ initialTemperature = 36.5 }) => {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
+                  </div>
+                </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button type="button" className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onClick={handleClose}>
+                <button type="button" className="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onClick={handleCloseModal}>
                   Cerrar
                 </button>
               </div>

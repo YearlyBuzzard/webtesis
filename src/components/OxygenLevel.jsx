@@ -2,38 +2,40 @@ import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { FaTint } from 'react-icons/fa';
 import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Label } from 'recharts';
+import 'react-toastify/dist/ReactToastify.css';
 
-const OxygenLevel = ({ initialOxygenLevel = 95 }) => {
-  const [oxygenLevel, setOxygenLevel] = useState(initialOxygenLevel);
-  const [oxygenLevelStatus, setOxygenLevelStatus] = useState('Normal');
+const OxygenLevel = () => {
+  const [oxygenLevel, setOxygenLevel] = useState(95);
   const [chartData, setChartData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const lastNotification = useRef(null); // Ref para rastrear la última notificación
+  const lastNotification = useRef(null);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      // Simulando la obtención de un nuevo nivel de oxígeno
-      const newOxygenLevel = Math.floor(Math.random() * (110 - 85 + 1) + 85);
-      setOxygenLevel(newOxygenLevel);
-    }, 5000);
+    const fetchOxygenLevel = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/oxygenLevel'); // Asegúrate de que esta URL sea correcta
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setOxygenLevel(data.oxygenLevel);
+
+        setChartData(prevData => [...prevData.slice(-11), { 
+          time: new Date().toLocaleTimeString(), 
+          value: data.oxygenLevel 
+        }]);
+      } catch (error) {
+        console.error('Error al obtener el nivel de oxígeno:', error);
+        toast.error('Error al cargar datos del nivel de oxígeno');
+      }
+    };
+
+    const intervalId = setInterval(fetchOxygenLevel, 5000);
     return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    let statusMessage = `Normal: ${oxygenLevel}%`;
-    if (oxygenLevel < 90) {
-      statusMessage = `Peligro: ${oxygenLevel}%`;
-    } else if (oxygenLevel < 95) {
-      statusMessage = `Precaución: ${oxygenLevel}%`;
-    }
-
-    setOxygenLevelStatus(statusMessage);
-
-    setChartData(prevData => [...prevData.slice(-11), { 
-      time: new Date().toLocaleTimeString(), 
-      value: oxygenLevel, 
-      range: statusMessage 
-    }]);
+    let statusMessage = oxygenLevel < 90 ? `Peligro: ${oxygenLevel}%` : `Normal: ${oxygenLevel}%`;
 
     if (statusMessage.startsWith('Peligro') && lastNotification.current !== 'Peligro') {
       toast.error(`Peligro: El nivel de oxígeno en sangre es ${oxygenLevel}%, anormalmente bajo.`);

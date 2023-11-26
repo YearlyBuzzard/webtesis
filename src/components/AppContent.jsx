@@ -3,7 +3,7 @@ import { useParams, useLocation, Routes, Route } from 'react-router-dom';
 import UserProfile from "../pages/UserProfile";
 import Spinner from "../assets/Spinner";
 // Asegúrate de importar los componentes correctamente
-import { Nav, HeartRate, OxygenLevel, PatientBloodPressure, PatientTemperature, Dashboard, CameraComponent} from '.';
+import { Nav, HeartRate, OxygenLevel, PatientBloodPressure, PatientTemperature, Dashboard, CameraComponent } from '.';
 import { toast } from 'react-toastify';
 
 let alertId = 0;
@@ -21,7 +21,6 @@ const AppContent = () => {
     const fetchPatientData = async () => {
       setIsLoading(true);
       try {
-        // Asegúrate de reemplazar 'http://tuServidor/api/patients/' con la URL real de tu servidor
         const response = await fetch(`http://localhost:3001/api/patients/${patientId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -41,7 +40,6 @@ const AppContent = () => {
     }
   }, [patientId]);
 
-  // Agregar una alerta con un mensaje y tipo específico
   const addAlert = (message, type) => {
     setAlerts((prevAlerts) => [
       ...prevAlerts,
@@ -49,29 +47,21 @@ const AppContent = () => {
     ]);
   };
 
-  // Eliminar una alerta por su ID
   const removeAlert = (id) => {
-    setAlerts((prevAlerts) =>
-      prevAlerts.filter((alert) => alert.id !== id)
-    );
+    setAlerts((prevAlerts) => prevAlerts.filter((alert) => alert.id !== id));
   };
 
-  // Renderizar las alertas si hay alguna
   const renderAlerts = () => {
-    if (alerts.length > 0) {
-      return (
-        <div className="fixed bottom-4 right-4 flex flex-col space-y-4">
-          {alerts.map((alert) => (
-            <div key={alert.id} className={`bg-${alert.type}-200 p-4 rounded-md`}>
-              {alert.message}
-              <button className="ml-2 text-red-500" onClick={() => removeAlert(alert.id)}>Cerrar</button>
-            </div>
-          ))}
-        </div>
-      );
-    } else {
-      return null;
-    }
+    return alerts.length > 0 && (
+      <div className="fixed bottom-4 right-4 flex flex-col space-y-4">
+        {alerts.map((alert) => (
+          <div key={alert.id} className={`bg-${alert.type}-200 p-4 rounded-md`}>
+            {alert.message}
+            <button className="ml-2 text-red-500" onClick={() => removeAlert(alert.id)}>Cerrar</button>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   const commonComponentContainerStyle = "row-span-1 col-span-1 md:col-span-1 h-full bg-white p-6 shadow-lg rounded-xl flex justify-center items-center overflow-hidden";
@@ -96,9 +86,8 @@ const AppContent = () => {
               <PatientBloodPressure systolic={120} diastolic={80} />
             </div>
             <div className={commonComponentContainerStyle}>
-              <PatientTemperature initialTemperature={37.0} />
+              <PatientTemperature initialTemperature={37.0} patientId={patientId} />
             </div>
-            {/* Más componentes si los necesitas */}
             <div className={commonComponentContainerStyle}>
               <CameraComponent />
             </div>

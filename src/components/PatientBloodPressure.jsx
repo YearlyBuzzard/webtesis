@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { FaHeartbeat } from 'react-icons/fa';
-import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Legend, Label } from 'recharts';
+import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import 'react-toastify/dist/ReactToastify.css';
 
 const PatientBloodPressure = () => {
@@ -9,36 +9,46 @@ const PatientBloodPressure = () => {
   const [diastolic, setDiastolic] = useState(80);
   const [data, setData] = useState([]);
   const [notification, setNotification] = useState(null);
-  const lastNotification = useRef(null); // Ref para rastrear la última notificación
+  const lastNotification = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newSystolic = Math.floor(Math.random() * (140 - 90 + 1) + 90);
-      const newDiastolic = Math.floor(Math.random() * (90 - 60 + 1) + 60);
-      setSystolic(newSystolic);
-      setDiastolic(newDiastolic);
-      setData((prevData) => [
-        ...prevData.slice(-11),
-        { time: new Date().toLocaleTimeString(), systolic: newSystolic, diastolic: newDiastolic },
-      ]);
-    }, 10000);
+    const fetchBloodPressure = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/bloodPressure'); // Asegúrate de que esta URL sea correcta
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const bpData = await response.json();
+        setSystolic(bpData.systolic);
+        setDiastolic(bpData.diastolic);
 
-    return () => clearInterval(interval);
+        setData(prevData => [
+          ...prevData.slice(-11),
+          { time: new Date().toLocaleTimeString(), systolic: bpData.systolic, diastolic: bpData.diastolic },
+        ]);
+      } catch (error) {
+        console.error('Error al obtener la presión arterial:', error);
+        toast.error('Error al cargar datos de presión arterial');
+      }
+    };
+
+    const intervalId = setInterval(fetchBloodPressure, 5000);
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
     let statusMessage;
     if (systolic < 90 || systolic > 140 || diastolic < 60 || diastolic > 90) {
       statusMessage = 'Peligro';
-      if (lastNotification.current !== statusMessage) {
-        toast.error(`Peligro: La presión arterial del paciente es ${systolic}/${diastolic} mmHg, anormalmente alta o baja.`);
-      }
     } else if ((systolic >= 90 && systolic <= 120) && (diastolic >= 60 && diastolic <= 80)) {
       statusMessage = 'Normal';
-      if (lastNotification.current !== statusMessage) {
-        toast.success(`Normal: La presión arterial del paciente es ${systolic}/${diastolic} mmHg.`);
-      }
+    }
+
+    if (lastNotification.current !== statusMessage) {
+      statusMessage === 'Peligro' 
+        ? toast.error(`Peligro: La presión arterial del paciente es ${systolic}/${diastolic} mmHg, anormalmente alta o baja.`)
+        : toast.success(`Normal: La presión arterial del paciente es ${systolic}/${diastolic} mmHg.`);
     }
 
     setNotification(statusMessage);
@@ -50,9 +60,6 @@ const PatientBloodPressure = () => {
   if (notification === 'Peligro') {
     color = 'text-red-500';
     colorValue = '#EF4444';
-  } else if (notification === 'warning') {
-    color = 'text-yellow-500';
-    colorValue = '#FBBF24';
   } else {
     color = 'text-green-500';
     colorValue = '#10B981';
