@@ -30,7 +30,7 @@ const OxygenLevel = () => {
       }
     };
 
-    const intervalId = setInterval(fetchOxygenLevel, 5000);
+    const intervalId = setInterval(fetchOxygenLevel, 2000);
     return () => clearInterval(intervalId);
   }, []);
 

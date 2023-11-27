@@ -17,15 +17,7 @@ const UserProfile = ({ patient }) => {
     return (
         <div className="container mx-auto p-4">
             <div className="flex flex-col items-center justify-center md:flex-row md:items-start md:space-x-4">
-                {/* Imagen del usuario */}
-                <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex justify-center items-center overflow-hidden rounded-full border-4 border-blue-100 mb-4 md:mb-0">
-                    <img
-                        className="object-cover w-full h-full"
-                        src="https://via.placeholder.com/150"
-                        alt="User profile"
-                    />
-                </div>
-
+                
                 {/* Datos del usuario */}
                 <div className="flex-grow">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-6">Informacion Paciente</h2>
@@ -38,6 +30,16 @@ const UserProfile = ({ patient }) => {
                         <InfoRow label="CURP:" value={patient.CURP} />
                     </div>
                 </div>
+
+                {/* Imagen del usuario */}
+                <div className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex justify-center items-center overflow-hidden rounded-full border-4 border-blue-100 mb-4 md:mb-0">
+                    <img
+                        className="object-cover w-full h-full"
+                        src="https://via.placeholder.com/150"
+                        alt="User profile"
+                    />
+                </div>
+
             </div>
         </div>
     );

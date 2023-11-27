@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { MdLocalHospital, MdFavorite, MdAssessment, MdNotificationsActive, MdSettings } from 'react-icons/md';
+import { Link, useNavigate } from 'react-router-dom';
+import { MdLocalHospital, MdFavorite, MdAssessment, MdNotificationsActive, MdSettings, MdExitToApp } from 'react-icons/md';
 
-// Función para generar un color aleatorio en formato hexadecimal
 function getRandomColor() {
   const letters = '0123456789ABCDEF';
   let color = '#';
@@ -13,52 +12,66 @@ function getRandomColor() {
 }
 
 const Slider = () => {
+  const navigate = useNavigate();
   const firstName = sessionStorage.getItem('userFirstName');
   const lastName = sessionStorage.getItem('userLastName');
   const fullName = `${firstName} ${lastName}`;
-  const initial = firstName ? firstName[0] : ''; // Obtiene la primera letra del nombre
-  const randomColor = getRandomColor(); // Genera un color aleatorio
+  const initial = firstName ? firstName[0] : '';
+  const randomColor = getRandomColor();
+
+  const handleLogout = () => {
+    sessionStorage.clear();
+    navigate('/');
+  };
 
   return (
-    <div className="h-screen flex justify-center items-center">
-      <aside className="bg-light-blue-100 min-h-full w-80 p-6 shadow-md rounded-3xl">
-        <div className="flex items-center gap-3 mb-12">
-          <span className="w-12 h-12 rounded-full flex justify-center items-center" 
-                style={{ backgroundColor: randomColor, color: 'white', fontSize: '24px' }}>
-            {initial}
-          </span>
-          <div className="text-lg font-semibold text-gray-900">{fullName}</div>
-        </div>
+    <div className="h-screen flex bg-gray-100">
+      <aside className="bg-white w-80 shadow-md min-h-screen flex flex-col justify-between">
+        <div>
+          <div className="flex items-center justify-center p-6 border-b">
+            <span className="flex items-center justify-center h-12 w-12 rounded-full text-white text-xl font-medium" 
+                  style={{ backgroundColor: randomColor }}>
+              {initial}
+            </span>
+            <div className="ml-4 text-lg font-semibold text-gray-900">{fullName}</div>
+          </div>
 
-        <nav>
-          <ul className="space-y-4">
+          <nav className="mt-4">
+          <ul className="space-y-2">
             <li>
-              <Link to="/Dashboard" className="flex items-center gap-4 text-gray-800 hover:text-blue-700">
-                <MdLocalHospital className="w-8 h-8" /><span>Inicio</span>
+              <Link to="/Dashboard" className="flex items-center gap-4 p-4 hover:bg-gray-100">
+                <MdLocalHospital className="w-6 h-6" /><span>Inicio</span>
               </Link>
             </li>
             <li>
-              <Link to="/Pacientes" className="flex items-center gap-4 text-gray-800 hover:text-blue-700">
-                <MdFavorite className="w-8 h-8" /><span>Pacientes</span>
+              <Link to="/Pacientes" className="flex items-center gap-4 p-4 hover:bg-gray-100">
+                <MdFavorite className="w-6 h-6" /><span>Pacientes</span>
               </Link>
             </li>
             <li>
-              <Link to="/Alertas" className="flex items-center gap-4 text-gray-800 hover:text-blue-700">
-                <MdNotificationsActive className="w-8 h-8" /><span>Alertas</span>
+              <Link to="/Alertas" className="flex items-center gap-4 p-4 hover:bg-gray-100">
+                <MdNotificationsActive className="w-6 h-6" /><span>Alertas</span>
               </Link>
             </li>
             <li>
-              <Link to="/Analiticas" className="flex items-center gap-4 text-gray-800 hover:text-blue-700">
-                <MdAssessment className="w-8 h-8" /><span>Análiticas</span>
+              <Link to="/Analiticas" className="flex items-center gap-4 p-4 hover:bg-gray-100">
+                <MdAssessment className="w-6 h-6" /><span>Análiticas</span>
               </Link>
             </li>
             <li>
-              <Link to="/Settings" className="flex items-center gap-4 text-gray-800 hover:text-blue-700">
-                <MdSettings className="w-8 h-8" /><span>Ajustes</span>
+              <Link to="/Settings" className="flex items-center gap-4 p-4 hover:bg-gray-100">
+                <MdSettings className="w-6 h-6" /><span>Ajustes</span>
               </Link>
             </li>
           </ul>
-        </nav>
+          </nav>
+        </div>
+
+        <div className="p-6 border-t">
+          <button onClick={handleLogout} className="w-full flex items-center gap-4 text-gray-700 hover:text-blue-600">
+            <MdExitToApp className="w-6 h-6" /><span>Cerrar sesión</span>
+          </button>
+        </div>
       </aside>
     </div>
   );

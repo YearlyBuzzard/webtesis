@@ -33,26 +33,34 @@ const PatientBloodPressure = () => {
       }
     };
 
-    const intervalId = setInterval(fetchBloodPressure, 5000);
+    const intervalId = setInterval(fetchBloodPressure, 2000);
     return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    let statusMessage;
-    if (systolic < 90 || systolic > 140 || diastolic < 60 || diastolic > 90) {
+    const isInNormalRange = (systolic, diastolic) => 
+      systolic >= 90 && systolic <= 120 && diastolic >= 60 && diastolic <= 80;
+
+    const isInDangerRange = (systolic, diastolic) => 
+      systolic < 90 || systolic > 140 || diastolic < 60 || diastolic > 90;
+
+    let statusMessage = '';
+    if (isInDangerRange(systolic, diastolic)) {
       statusMessage = 'Peligro';
-    } else if ((systolic >= 90 && systolic <= 120) && (diastolic >= 60 && diastolic <= 80)) {
+    } else if (isInNormalRange(systolic, diastolic)) {
       statusMessage = 'Normal';
     }
 
     if (lastNotification.current !== statusMessage) {
-      statusMessage === 'Peligro' 
-        ? toast.error(`Peligro: La presión arterial del paciente es ${systolic}/${diastolic} mmHg, anormalmente alta o baja.`)
-        : toast.success(`Normal: La presión arterial del paciente es ${systolic}/${diastolic} mmHg.`);
+      if (statusMessage === 'Peligro') {
+        toast.error(`Peligro: La presión arterial del paciente es ${systolic}/${diastolic} mmHg, anormalmente alta o baja.`);
+      } else if (statusMessage === 'Normal') {
+        toast.success(`Normal: La presión arterial del paciente es ${systolic}/${diastolic} mmHg.`);
+      }
+      lastNotification.current = statusMessage;
     }
 
     setNotification(statusMessage);
-    lastNotification.current = statusMessage;
   }, [systolic, diastolic]);
 
   let color = '';

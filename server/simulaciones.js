@@ -37,7 +37,7 @@ client.on('connect', () => {
     client.publish('nivelOxigeno/photon', currentOxygenLevel.toString());
 
     console.log(`Datos enviados: HR=${currentHeartRate}, Temp=${currentTemperature}, BP=${currentSystolic}/${currentDiastolic}, O2=${currentOxygenLevel}`);
-  }, 5000); // Enviar cada 5 segundos
+  }, 2000); // Enviar cada 5 segundos
 });
 
 client.on('error', (error) => {
