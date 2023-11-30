@@ -26,7 +26,7 @@ mqttClient.on('connect', () => {
   mqttClient.subscribe('presionArterial/photon');
   mqttClient.subscribe('nivelOxigeno/photon'); // Suscripción al tópico del nivel de oxígeno
 
-  
+
 });
 
 mqttClient.on('message', (topic, message) => {
@@ -41,7 +41,7 @@ mqttClient.on('message', (topic, message) => {
     lastSystolic = bloodPressure.systolic;
     lastDiastolic = bloodPressure.diastolic;
     console.log(`Presión arterial recibida: ${lastSystolic}/${lastDiastolic}`);
-  }else   if (topic === 'nivelOxigeno/photon') {
+  } else if (topic === 'nivelOxigeno/photon') {
     lastOxygenLevel = parseFloat(message.toString());
     console.log(`Nivel de oxígeno recibido: ${lastOxygenLevel}`);
   }
@@ -65,6 +65,20 @@ app.get('/api/bloodPressure', (req, res) => {
 app.get('/api/oxygenLevel', (req, res) => {
   res.json({ oxygenLevel: lastOxygenLevel });
 });
+
+
+// Endpoint para obtener el historial de alertas
+app.get('/api/alerts_history', (req, res) => {
+  console.log('GET request to /api/Signos vitales received');
+  connection.query('SELECT * FROM vital_signs', (error, results) => {
+    if (error) {
+      res.status(500).json({ message: 'Error interno del servidor' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+  
 
 // // Configuración del servidor de streaming para la cámara USB
 // app.get('/camera-stream', (req, res) => {
@@ -102,23 +116,52 @@ app.get('/api/oxygenLevel', (req, res) => {
 // Ruta para guardar los datos de temperatura del paciente
 
 app.post('/api/vital_signs', (req, res) => {
-  const { patient_id, temperatura } = req.body;
+  const { patient_id, temperatura, bpm, oxygenLevel, systolic, diastolic } = req.body;
 
-  if (!patient_id || temperatura === undefined) {
-    return res.status(400).json({ message: 'Datos incompletos: se requieren patient_id y temperatura.' });
+  if (!patient_id || (temperatura === undefined && bpm === undefined && oxygenLevel === undefined && systolic === undefined && diastolic === undefined)) {
+    return res.status(400).json({ message: 'Datos incompletos: se requieren patient_id y al menos uno de los parámetros (temperatura, bpm, oxygenLevel, systolic, diastolic).' });
   }
 
-  const query = 'INSERT INTO vital_signs (patient_id, temperatura, fecha_hora) VALUES (?, ?, CURRENT_TIMESTAMP)';
-  
-  connection.query(query, [patient_id, temperatura], (error, results) => {
+  let query = 'INSERT INTO vital_signs (patient_id';
+  let values = '(?';
+  let params = [patient_id];
+
+  if (temperatura !== undefined) {
+    query += ', temperatura';
+    values += ', ?';
+    params.push(temperatura);
+  }
+  if (bpm !== undefined) {
+    query += ', ritmo_cardiaco';
+    values += ', ?';
+    params.push(bpm);
+  }
+  if (oxygenLevel !== undefined) {
+    query += ', oxigenacion_sangre';
+    values += ', ?';
+    params.push(oxygenLevel);
+  }
+  if (systolic !== undefined) {
+    query += ', presion_arterial_sistolica';
+    values += ', ?';
+    params.push(systolic);
+  }
+  if (diastolic !== undefined) {
+    query += ', presion_arterial_diastolica';
+    values += ', ?';
+    params.push(diastolic);
+  }
+
+  query += ', fecha_hora) VALUES ' + values + ', CURRENT_TIMESTAMP)';
+
+  connection.query(query, params, (error, results) => {
     if (error) {
       console.error('Error al insertar en la base de datos:', error);
-      return res.status(500).json({ message: 'Error al guardar los datos de temperatura' });
+      return res.status(500).json({ message: 'Error al guardar los datos de signos vitales' });
     }
-    res.status(201).json({ message: 'Datos de temperatura guardados con éxito', id: results.insertId });
+    res.status(201).json({ message: 'Datos de signos vitales guardados con éxito', id: results.insertId });
   });
 });
-
 
 // código para registrar doctores
 app.post('/api/doctors', (req, res) => {

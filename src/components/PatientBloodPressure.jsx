@@ -4,18 +4,17 @@ import { FaHeartbeat } from 'react-icons/fa';
 import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import 'react-toastify/dist/ReactToastify.css';
 
-const PatientBloodPressure = () => {
+const PatientBloodPressure = ({ patientId }) => {
   const [systolic, setSystolic] = useState(120);
   const [diastolic, setDiastolic] = useState(80);
   const [data, setData] = useState([]);
-  const [notification, setNotification] = useState(null);
   const lastNotification = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchBloodPressure = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/bloodPressure'); // Asegúrate de que esta URL sea correcta
+        const response = await fetch('http://localhost:3001/api/bloodPressure');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -60,18 +59,30 @@ const PatientBloodPressure = () => {
       lastNotification.current = statusMessage;
     }
 
-    setNotification(statusMessage);
-  }, [systolic, diastolic]);
+    saveBloodPressureData({ patient_id: patientId, systolic: systolic, diastolic: diastolic });
+  }, [systolic, diastolic, patientId]);
 
-  let color = '';
-  let colorValue = '';
-  if (notification === 'Peligro') {
-    color = 'text-red-500';
-    colorValue = '#EF4444';
-  } else {
-    color = 'text-green-500';
-    colorValue = '#10B981';
-  }
+  // Función para guardar datos de presión arterial
+  const saveBloodPressureData = async (data) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/vital_signs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Network response was not ok');
+      }
+      console.log('Datos de presión arterial guardados con éxito');
+    } catch (error) {
+      console.error('Error al guardar la presión arterial:', error);
+      toast.error('Error al guardar datos de presión arterial: ' + error.message);
+    }
+  };
 
   const handleClose = () => setIsModalOpen(false);
   const handleShow = () => setIsModalOpen(true);
@@ -80,11 +91,12 @@ const PatientBloodPressure = () => {
     <div className="flex flex-col w-full h-full">
       <div className="bg-white p-5 rounded-xl w-full" onClick={handleShow}>
         <div className="text-center flex flex-col items-center w-full">
-          <h1 className="text-2xl font-bold text-blue-800 mb-4 w-full">Presión Arterial <FaHeartbeat className="inline-block ml-2" /></h1>
-          <div className={`text-5xl font-semibold ${color} mb-4`}>{systolic}/{diastolic} mmHg</div>
+          <h1 className="text-2xl font-bold text-blue-800 mb-4">Presión Arterial <FaHeartbeat className="inline-block ml-2" /></h1>
+          <div className="text-5xl font-semibold mb-4">{systolic}/{diastolic} mmHg</div>
           <ResponsiveContainer width="100%" height={100}>
             <AreaChart data={data} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-              <Area type="monotone" dataKey="systolic" stroke="none" fill={colorValue} fillOpacity={0.2} />
+              <Area type="monotone" dataKey="systolic" stroke="none" fill="#EF4444" fillOpacity={0.2} />
+              <Area type="monotone" dataKey="diastolic" stroke="none" fill="#10B981" fillOpacity={0.2} />
               <YAxis hide domain={['auto', 'auto']} />
               <XAxis hide dataKey="time" />
               <Tooltip />
@@ -110,8 +122,8 @@ const PatientBloodPressure = () => {
                         <YAxis label={{ value: 'mmHg', angle: -90, position: 'insideLeft' }} />
                         <Tooltip />
                         <Legend verticalAlign="top" height={36} />
-                        <Area name="Sistólica" type="monotone" dataKey="systolic" stroke="blue" fill={colorValue} fillOpacity={0.6} />
-                        <Area name="Diastólica" type="monotone" dataKey="diastolic" stroke="red" fill={colorValue} fillOpacity={0.5} />
+                        <Area name="Sistólica" type="monotone" dataKey="systolic" stroke="blue" fill="#EF4444" fillOpacity={0.6} />
+                        <Area name="Diastólica" type="monotone" dataKey="diastolic" stroke="red" fill="#10B981" fillOpacity={0.5} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>

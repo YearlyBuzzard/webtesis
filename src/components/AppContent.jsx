@@ -74,16 +74,16 @@ const AppContent = () => {
         <Route path="/" element={
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8">
             <div className={commonComponentContainerStyle}>
-              <HeartRate bpm={bpm} />
+              <HeartRate bpm={bpm}  patientId={patientId}/>
             </div>
             <div className={commonComponentContainerStyle}>
-              <OxygenLevel level={98} />
+              <OxygenLevel level={98} patientId={patientId}/>
             </div>
             <div className={ComponentContainerStyle}>
               {isLoading ? <Spinner /> : <UserProfile patient={patientData} />}
             </div>
             <div className={commonComponentContainerStyle}>
-              <PatientBloodPressure systolic={120} diastolic={80} />
+              <PatientBloodPressure systolic={120} diastolic={80} patientId={patientId}/>
             </div>
             <div className={commonComponentContainerStyle}>
               <PatientTemperature initialTemperature={37.0} patientId={patientId} />

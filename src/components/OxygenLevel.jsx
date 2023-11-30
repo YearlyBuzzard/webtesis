@@ -4,7 +4,7 @@ import { FaTint } from 'react-icons/fa';
 import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer, Label } from 'recharts';
 import 'react-toastify/dist/ReactToastify.css';
 
-const OxygenLevel = () => {
+const OxygenLevel = ({ patientId }) => {
   const [oxygenLevel, setOxygenLevel] = useState(95);
   const [chartData, setChartData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,7 +13,7 @@ const OxygenLevel = () => {
   useEffect(() => {
     const fetchOxygenLevel = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/oxygenLevel'); // Asegúrate de que esta URL sea correcta
+        const response = await fetch('http://localhost:3001/api/oxygenLevel');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -44,7 +44,32 @@ const OxygenLevel = () => {
       toast.success(`Normal: El nivel de oxígeno en sangre es ${oxygenLevel}%.`);
       lastNotification.current = 'Normal';
     }
-  }, [oxygenLevel]);
+
+    // Guardar datos de nivel de oxígeno en la base de datos
+    saveOxygenLevelData({ patient_id: patientId, oxygenLevel: oxygenLevel });
+  }, [oxygenLevel, patientId]);
+
+  // Función para guardar datos de nivel de oxígeno
+  const saveOxygenLevelData = async (data) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/vital_signs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Network response was not ok');
+      }
+      console.log('Datos de nivel de oxígeno guardados con éxito');
+    } catch (error) {
+      console.error('Error al guardar el nivel de oxígeno:', error);
+      toast.error('Error al guardar datos de nivel de oxígeno: ' + error.message);
+    }
+  };
 
   let color = '';
   let colorValue = '';

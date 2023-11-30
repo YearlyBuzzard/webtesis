@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { GiHeartBeats } from 'react-icons/gi';
 import { AreaChart, Area, YAxis, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const HeartRate = ({ initialBpm = 75 }) => {
+const HeartRate = ({ initialBpm = 75, patientId }) => {
   const [bpm, setBpm] = useState(initialBpm);
   const [heartRateStatus, setHeartRateStatus] = useState('Normal');
   const [chartData, setChartData] = useState([]);
@@ -52,7 +52,32 @@ const HeartRate = ({ initialBpm = 75 }) => {
       toast.success(`Normal: El ritmo cardíaco del paciente es ${bpm} BPM.`);
       bpmRef.current = 'Normal';
     }
-  }, [bpm]);
+
+    // Guardar datos de ritmo cardíaco en la base de datos
+    saveHeartRateData({ patient_id: patientId, bpm: bpm });
+  }, [bpm, patientId]);
+
+  // Función para guardar datos de ritmo cardíaco
+  const saveHeartRateData = async (data) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/vital_signs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Network response was not ok');
+      }
+      console.log('Datos de ritmo cardíaco guardados con éxito');
+    } catch (error) {
+      console.error('Error al guardar el ritmo cardíaco:', error);
+      toast.error('Error al guardar datos de ritmo cardíaco: ' + error.message);
+    }
+  };
 
   let color = '';
   let colorValue = '';
